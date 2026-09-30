@@ -9,5 +9,4 @@ pip install -q --upgrade pip
 pip install -q -e ".[test]"
 pytest
 python -m vista.run_all --config "configs/experiments/${CONFIG}.json"
-python scripts/build_dashboard.py "${CONFIG}"
 echo "done: results/${CONFIG}/, paper_artifacts/figures/${CONFIG}/, paper_artifacts/dashboard_${CONFIG}.html"

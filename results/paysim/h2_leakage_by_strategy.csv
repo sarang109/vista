@@ -1,0 +1,6 @@
+strategy,payments,mean_leakage_bits,ci95_lo,ci95_hi,p95_leakage_bits,mean_claims
+B2_raw_attributes,1216359,8.6643,8.65921,8.6694,13.315,9
+B4_vsac_disclose_all,1216359,4.70898,4.70661,4.71134,7.005,8.39251
+B3_fixed_bundle,1216359,3.33116,3.32982,3.3325,4.245,8.39251
+VISTA_MDPS_DET,1216359,2.33361,2.33237,2.33486,3.135,4.6377
+VISTA_BOP_floor,1216359,1.92696,1.92574,1.92818,3.115,0

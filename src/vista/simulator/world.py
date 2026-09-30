@@ -158,7 +158,7 @@ class World:
             sender_fi=self.banks[int(pay["sender"][j])].id, receiver_fi=self.banks[int(pay["receiver"][j])].id,
             payer_ref=f"P{int(pay['payer'][j]):07d}", beneficiary_ref=f"B{int(pay['payee_slot'][j]):07d}",
             amount_minor=int(pay["amount_minor"][j]), currency="USD", timestamp_ms=int(pay["ts"][j]) * 1000,
-            tx_id=f"TX{self.seed:03d}{j:09d}", rail="RTP", purpose=str(int(pay["purpose"][j])))
+            tx_id=f"TX{self.seed:03d}{int(pay['gidx'][j]) if 'gidx' in pay else j:09d}", rail="RTP", purpose=str(int(pay["purpose"][j])))
 
     def evidence(self, pay: dict, j: int, pid: str, rng) -> list[dict]:
         b = self.banks[int(pay["sender"][j])]

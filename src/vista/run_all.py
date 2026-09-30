@@ -1,7 +1,9 @@
 """One-command reproduction: python -m vista.run_all --config configs/experiments/smoke.json
 
 Runs every experiment, writes CSVs under results/<run-name>/, regenerates figures and tables under
-paper_artifacts/, and records a manifest (config, versions, hardware, timings, file hashes).
+paper_artifacts/, builds a self-contained offline dashboard (results/<run-name>/dashboard.html) and records
+a manifest (config, versions, hardware, timings, file hashes). A progress line with the estimated time
+remaining is printed every minute.
 """
 from __future__ import annotations
 
@@ -31,6 +33,26 @@ def _versions():
     except ImportError:
         v["gmpy2"] = "absent (pure-Python fallback)"
     return v
+
+
+def _priors(name: str, cfg: dict, steps: list[str]) -> list[tuple[str, float]]:
+    """Expected seconds per step: from an earlier run's manifest if one exists, else coarse defaults."""
+    prior: dict[str, float] = {}
+    for cand in (name, "full", "smoke"):
+        p = os.path.join(ROOT, "results", cand, "manifest.json")
+        if os.path.exists(p):
+            try:
+                with open(p) as fh:
+                    prior = {st["step"]: st["seconds"] for st in json.load(fh)["steps"] if st["status"] == "ok"}
+                break
+            except (OSError, ValueError, KeyError):
+                pass
+    wc = cfg["world"]
+    rows = wc.get("n_payments") or 4_963_336
+    if wc.get("source") == "paysim":
+        prior["e2e"] = rows / 4000 + 240  # conservative; replaced by the live estimate once chunks complete
+        prior.setdefault("data", 400)
+    return [(st, float(prior.get(st, 10.0))) for st in steps]
 
 
 def main(argv=None):
@@ -81,6 +103,26 @@ def main(argv=None):
         ("e2e", lambda: exp_e2e.run(cfg, out)),
         ("e10", lambda: exp_e2e.run_e10(cfg, out)),
     ]
+    if cfg["world"].get("source") == "paysim":
+        def prep():
+            from .progress import PROGRESS as P
+            from .simulator.source import URL, ensure_cache, resolve_path
+            wc = cfg["world"]
+            meta = ensure_cache(resolve_path(wc.get("paysim_path", "data/paysim.csv")),
+                                resolve_path(wc.get("paysim_cache", "data/paysim_cache")),
+                                wc.get("paysim_url", URL), True, P.update)
+            path = os.path.join(out, "paysim_verification.json")
+            with open(path, "w") as fh:
+                json.dump(meta, fh, indent=2)
+            return [path]
+
+        steps.insert(0, ("data", prep))
+    from .progress import PROGRESS
+    PROGRESS.interval = float(cfg.get("progress_interval_s", 60))
+    active = [st for st, _ in steps if not only or st in only]
+    PROGRESS.start(_priors(name, cfg, active))
+    print(f"[vista] {len(active)} steps; a progress line with the time remaining is printed every "
+          f"{PROGRESS.interval:.0f}s", flush=True)
     manifest = {"name": name, "config": cfg, "versions": _versions(), "started": time.strftime("%Y-%m-%dT%H:%M:%S"),
                 "steps": []}
     prev_path = os.path.join(out, "manifest.json")
@@ -95,20 +137,22 @@ def main(argv=None):
         if only and step not in only:
             continue
         t0 = time.time()
-        print(f"[vista] {step:>12} ...", flush=True, end=" ")
+        PROGRESS.begin(step)
+        print(f"[vista] {step:>12} ...", flush=True)
         try:
             files = fn()
             dt = time.time() - t0
-            print(f"done in {dt:6.1f}s -> {', '.join(os.path.basename(f) for f in files)}", flush=True)
+            print(f"[vista] {step:>12} done in {dt:6.1f}s -> {', '.join(os.path.basename(f) for f in files)}", flush=True)
             manifest["steps"].append({"step": step, "seconds": round(dt, 2), "status": "ok",
                                       "files": [os.path.relpath(f, ROOT) for f in files]})
         except Exception as e:  # keep going; record the failure honestly
             failed = True
-            print(f"FAILED: {e}", flush=True)
+            print(f"[vista] {step:>12} FAILED: {e}", flush=True)
             traceback.print_exc()
             manifest["steps"].append({"step": step, "seconds": round(time.time() - t0, 2), "status": "failed",
                                       "error": repr(e)})
 
+    PROGRESS.begin("figures+dashboard")
     order = [st for st, _ in steps]
     manifest["steps"] = sorted(prev_steps + manifest["steps"], key=lambda st: order.index(st["step"]))
     from .figures import make_all
@@ -131,7 +175,21 @@ def main(argv=None):
             manifest["sha256"][f] = h.hexdigest()
     with open(os.path.join(out, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=2, default=str)
-    print(f"[vista] results: {out}\n[vista] figures: {len(figs)} in paper_artifacts/figures/{name}")
+    dash = []
+    try:
+        from .dashboard import build
+        dash = build(name)
+    except Exception as e:  # the CSVs are the primary result; never lose them to a dashboard problem
+        failed = True
+        print(f"[vista] dashboard FAILED: {e}", flush=True)
+        traceback.print_exc()
+    PROGRESS.stop()
+    print("[vista] ---------------------------------------------------------------")
+    print(f"[vista] CSV results   : {out}")
+    print(f"[vista] figures       : paper_artifacts/figures/{name} ({len(figs)} PNGs)")
+    for d in dash:
+        print(f"[vista] HTML dashboard: file://{d}")
+    print("[vista] The dashboard is one self-contained file (no network needed); open it in any browser or send it as is.")
     return 1 if failed else 0
 
 

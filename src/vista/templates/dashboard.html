@@ -1,6 +1,4 @@
 <title>VISTA Evaluation Results</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500&display=swap">
 <style>
 /* Layout: an evidence ledger for a paper draft. Hypothesis scoreboard first, then one section per
    research question, each chart paired with the numbers that back it. */
@@ -10,8 +8,8 @@
   --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4;
   --good: #0ca30c; --good-ink: #006300; --warn: #b77800; --bad: #d03b3b;
   --good-bg: #e5f3e5; --warn-bg: #fbf0d9; --bad-bg: #f8e3e3;
-  --display: "Newsreader", Georgia, serif; --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --display: "Iowan Old Style", "Palatino Linotype", Georgia, serif; --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #111413; --panel: #1a1d1c; --ink: #f2f4f3; --ink2: #c1c7c4; --muted: #8b928f;
@@ -214,10 +212,14 @@ function table(id, cols, rows) {
 }
 
 // ---------------------------------------------------------------- header
-const w = D.manifest.world, v = D.manifest.versions;
+const w = D.manifest.world, v = D.manifest.versions, src = D.source || {};
 const lat = Object.fromEntries(D.e7lat.map(r => [r.component, r]));
 const tput = D.e7lat.find(r => r.component === "throughput");
-$("lede").textContent = `${(+w.n_payments).toLocaleString()} interbank real-time payments from ${(+w.n_payers).toLocaleString()} payers across ${w.n_banks} institutions over ${w.days} simulated days. Every payment ran through real Ed25519, selective-disclosure, hash-chain and OR-proof cryptography, verification, the receiver's policy and MAN-S step-up. The security evidence is synthetic.`;
+const nrows = +tput.n, L = x => (+x).toLocaleString();
+const srcTxt = src.kind === "paysim"
+  ? `Transactions come from the public PaySim log: ${L(src.rows_total)} rows, of which the ${L(src.rows_usable)} TRANSFER, CASH_OUT, PAYMENT and DEBIT rows are used (CASH_IN is not a payment), including all ${L(src.fraud_usable)} labelled frauds, which are mapped to the account-takeover-like scenario. Amounts, timing, counterparties and fraud labels are PaySim's. Bank membership and every piece of security evidence are synthetic, because no public dataset contains interbank authentication evidence. Account names are hashed into a population of ${L(w.n_payers)} payers across ${w.n_banks} institutions.`
+  : `Transactions are synthetic: ${L(w.n_payers)} payers across ${w.n_banks} institutions over ${w.days} simulated days, with heavy-tailed amounts, diurnal and weekly arrival patterns and repeat payees.`;
+$("lede").textContent = `${L(nrows)} interbank real-time payments ran through real Ed25519, selective-disclosure, hash-chain and OR-proof cryptography, verification, the receiver's policy and MAN-S step-up. ${srcTxt}`;
 const full5 = D.e5.filter(r => r.ablation === "full");
 const tiles = [
   [fmt(n(tput.mean), 0) + "/s", `end-to-end throughput, ${tput.max}`],
@@ -299,5 +301,5 @@ table("t-h3", [{h: "strategy", f: r => r.strategy}, {h: "payments", num: 1, f: r
 table("t-ver", [{h: "#", f: r => r.id}, {h: "check", wrap: 1, f: r => r.check}, {h: "supports", f: r => r.supports},
   {h: "passed", num: 1, f: r => `${(+r.passed).toLocaleString()} / ${(+r.instances).toLocaleString()}`}, {h: "result", wrap: 1, f: r => r.result}, {h: "tag", f: r => r.tag}], D.ver);
 $("foot").innerHTML = `<div>Run started ${D.manifest.started}, finished ${D.manifest.finished}. Python ${v.python}, numpy ${v.numpy}, scipy ${v.scipy}, cryptography ${v.cryptography}, gmpy2 ${v.gmpy2}; ${v.machine}, ${v.cpus} CPUs.</div>
-<div>Regenerate with <code>python -m vista.run_all --config configs/experiments/full.json</code>, then <code>python scripts/build_dashboard.py full</code>.</div>`;
+<div>Regenerate with <code>python -m vista.run_all --config configs/experiments/paysim.json</code> (builds this page automatically). Latency percentiles come from 0.8%-resolution histograms; means and rates are exact. This file is self-contained and works offline.</div>`;
 </script>

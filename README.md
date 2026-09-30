@@ -16,16 +16,28 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[test]"
 pytest                                                      # unit + property + adversarial tests (~2 s)
 python -m vista.run_all --config configs/experiments/smoke.json   # everything, reduced scale (~1 min)
-python -m vista.run_all --config configs/experiments/full.json    # paper scale: 300k payments (~15-30 min, 8 cores)
+python -m vista.run_all --config configs/experiments/full.json    # synthetic stream, 300k payments (~4 min, 8 cores)
 ```
+
+Run on the public PaySim transaction log (downloads 494 MB once, no account or API key needed; ~20 minutes on 8 cores):
+
+```bash
+python -m vista.run_all --config configs/experiments/paysim.json
+```
+
+It prints a progress line with the estimated time remaining every minute. The file is checked against the published PaySim
+statistics (6,362,620 rows, 8,213 frauds) and refused if they differ. Memory stays small because the data is memory-mapped, workers
+process fixed-size chunks, and results are folded into counters and histograms as they arrive.
 
 Where the outputs go:
 
 - `results/<config>/*.csv`: raw results for every experiment.
+- `results/<config>/dashboard.html`: one self-contained offline HTML page (data embedded, no network or external fonts). Open it in any browser or send the file as is. A copy is also written to `paper_artifacts/dashboard_<config>.html`.
+- `results/<config>/e2e_transactions.csv[.gz]`: one row per payment (gzip-compressed above 1M payments).
 - `results/<config>/manifest.json`: config, library versions, hardware, per-step timings and SHA-256 hashes of every CSV.
 - `paper_artifacts/figures/<config>/*.png` and `paper_artifacts/tables/<config>/*.csv`: figures and tables for the paper.
 
-Run a single step with `--only e2e,e10`. The step names are `verification, e1, e2, e4, e5, e6, e11–e22, e2e, e10`.
+Run a single step with `--only e2e,e10` (`data` is the PaySim download and verification step). The step names are `verification, e1, e2, e4, e5, e6, e11–e22, e2e, e10`.
 
 ## What is implemented (blueprint section → module)
 

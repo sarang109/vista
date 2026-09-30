@@ -1,0 +1,4 @@
+strategy,stepup_payments,resolution_rate,mean_friction,mean_rounds,mean_user_seconds,friction_per_resolved,friction_ci95
+MAN_S,2570,0.272374,2.5677,1.26226,15.0747,9.42714,
+B6_blanket,2570,0.335798,11.5767,3.76732,275.471,34.4751,
+paired_diff_MAN_minus_blanket,2570,-0.0634241,-9.00895,,,,"[-9.256, -8.762]"

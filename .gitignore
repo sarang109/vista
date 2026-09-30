@@ -1,6 +1,17 @@
+# environment / caches
 .venv/
 __pycache__/
 *.egg-info/
 .pytest_cache/
-results/*/
-!results/.gitkeep
+
+# the PaySim dataset and its derived cache (never committed; the pipeline downloads it on demand)
+data/paysim.csv
+data/paysim.csv.part
+data/paysim_cache/
+*.part
+
+# per-payment result files are too large for GitHub (100 MB per-file limit); regenerate with vista.run_all
+results/*/e2e_transactions.csv
+results/*/e2e_transactions.csv.gz
+results/*/workload_transactions.csv
+results/*.log

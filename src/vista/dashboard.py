@@ -1,6 +1,7 @@
-"""Build a self-contained HTML results dashboard from results/<run>/*.csv.
+"""Build a self-contained, offline HTML dashboard from results/<run>/*.csv.
 
-usage: python scripts/build_dashboard.py [run-name]   ->  paper_artifacts/dashboard_<run>.html
+The page embeds all of its data (no network, no external fonts or scripts), so the file can be opened
+anywhere by anyone. usage: python -m vista.dashboard [run-name]
 """
 from __future__ import annotations
 
@@ -10,7 +11,7 @@ import math
 import os
 import sys
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 def read(res, name):
@@ -122,8 +123,7 @@ def verdicts(D):
     return out
 
 
-def main():
-    run = sys.argv[1] if len(sys.argv) > 1 else "full"
+def build(run: str) -> list[str]:
     res = os.path.join(ROOT, "results", run)
     D = {k: read(res, v) for k, v in {
         "h1": "h1_decision_fidelity.csv", "h2": "h2_leakage_by_strategy.csv", "h3": "h3_man_vs_blanket.csv",
@@ -137,19 +137,29 @@ def main():
         "e1": "e1_mdps_summary.csv", "banks": "banks.csv"}.items()}
     with open(os.path.join(res, "manifest.json")) as fh:
         man = json.load(fh)
+    src_p = os.path.join(res, "data_source.json")
+    D["source"] = json.load(open(src_p)) if os.path.exists(src_p) else {}
     D["verdicts"] = verdicts(D)
     D["manifest"] = {"world": man["config"]["world"], "versions": man["versions"], "started": man["started"],
                      "finished": man.get("finished"),
                      "steps": [{"step": s["step"], "seconds": s["seconds"], "status": s["status"]} for s in man["steps"]]}
-    # trim large tables to what the page draws
     D["e11"] = [{k: r[k] for k in ("frontier_size", "Lambda_bits", "PoD_bits", "prior")} for r in D["e11"]]
     D["e19"] = []
-    tpl = open(os.path.join(ROOT, "scripts", "dashboard_template.html")).read()
+    tpl = open(os.path.join(os.path.dirname(__file__), "templates", "dashboard.html")).read()
     html = tpl.replace("/*__DATA__*/null", json.dumps(D, separators=(",", ":")))
-    out = os.path.join(ROOT, "paper_artifacts", f"dashboard_{run}.html")
-    with open(out, "w") as fh:
-        fh.write(html)
-    print(out, f"{len(html) / 1024:.0f} KB")
+    outs = []
+    for out in (os.path.join(res, "dashboard.html"), os.path.join(ROOT, "paper_artifacts", f"dashboard_{run}.html")):
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        with open(out, "w") as fh:
+            fh.write(html)
+        outs.append(out)
+    return outs
+
+
+def main():
+    run = sys.argv[1] if len(sys.argv) > 1 else "full"
+    for p in build(run):
+        print(p, f"{os.path.getsize(p) / 1024:.0f} KB")
 
 
 if __name__ == "__main__":

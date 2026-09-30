@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "source_sha256": "16910f90577b0d981bf8ff289714510bb89bc71bff7d3f220f024e287e4eea6b",
+  "source_bytes": 493534783,
+  "sha256_matches_pinned_hf_copy": true,
+  "rows_total": 6362620,
+  "rows_usable": 4963336,
+  "rows_excluded_cash_in": 1399284,
+  "fraud_total": 8213,
+  "fraud_usable": 8213,
+  "flagged_total": 16,
+  "types": {
+    "PAYMENT": 2151495,
+    "TRANSFER": 532909,
+    "CASH_OUT": 2237500,
+    "DEBIT": 41432,
+    "CASH_IN": 1399284
+  },
+  "max_step": 743,
+  "verified_against_published_statistics": true,
+  "parse_seconds": 11.0,
+  "kind": "paysim",
+  "rows_used": 4963336,
+  "amount_scale": 1.0,
+  "payers_in_population": 500000,
+  "banks": 60,
+  "percentile_method": "log histogram, ~0.8% relative bin width (latencies); 0.01-bit bins (leakage)"
+}

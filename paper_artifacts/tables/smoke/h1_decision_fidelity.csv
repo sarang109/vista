@@ -1,4 +1,4 @@
 approach,payments,agreement_with_receiver_policy,ci95_lo,ci95_hi,false_accept_rate,false_reject_rate,accept_rate
-B0_metadata_only,10000,0.7328,0.723095,0.7425,0.140305,0.313825,0.5395
-B1_sender_risk_label,10000,0.7641,0.7564,0.772352,0.831038,0.0172296,0.942
-VISTA_initial,10000,1,1,1,0,0,0.7313
+B0_metadata_only,10000,0.7328,0.724039,0.741382,0.140305,0.313825,0.5395
+B1_sender_risk_label,10000,0.7641,0.755678,0.772319,0.831038,0.0172296,0.942
+VISTA_initial,10000,1,0.999616,1,0,0,0.7313

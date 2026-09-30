@@ -1,0 +1,7 @@
+claims_per_capsule,commit_p50_ms,commit_p99_ms,receipt_bytes,audit_openings_ok,log_entries,chain_ok
+1,0.009333,0.0308799,163.8,50/50,,
+2,0.0139585,0.0173663,164,50/50,,
+4,0.0224165,0.0361187,165,50/50,,
+6,0.0313125,0.0531275,165,50/50,,
+9,0.042771,0.0553423,165,50/50,,
+log_chain_verified,,,,,250,True

@@ -1,0 +1,17 @@
+regime,delta,audit_rate,lying_rate,mean_q_star,audits_per_1k_payments,mean_liar_realised_profit,caught_per_liar
+commit_before_settle,0.99,0,1,0.0612724,0,2455.28,0
+commit_before_settle,0.99,0.01,0.995,0.0612724,10,2028.46,0.904523
+commit_before_settle,0.99,0.02,0.89,0.0612724,20,1755.19,1.92135
+commit_before_settle,0.99,0.05,0.48,0.0612724,50,1570.53,4.88542
+commit_before_settle,0.99,0.1,0.165,0.0612724,100,1480.46,9.66667
+commit_before_settle,0.99,0.2,0.015,0.0612724,200,1771.52,18.3333
+commit_before_settle,0.99,0.3,0,0.0612724,300,0,0
+commit_before_settle,0.99,0.5,0,0.0612724,500,0,0
+no_precommitment,0.1,0,1,0.532889,0,2455.28,0
+no_precommitment,0.1,0.01,1,0.532889,10,2407.07,0.11
+no_precommitment,0.1,0.02,1,0.532889,20,2377.95,0.18
+no_precommitment,0.1,0.05,1,0.532889,50,2185.41,0.54
+no_precommitment,0.1,0.1,0.995,0.532889,100,1985.62,1.01508
+no_precommitment,0.1,0.2,0.885,0.532889,200,1832.21,1.82486
+no_precommitment,0.1,0.3,0.7,0.532889,300,1738.6,2.94286
+no_precommitment,0.1,0.5,0.48,0.532889,500,1407,5.35417

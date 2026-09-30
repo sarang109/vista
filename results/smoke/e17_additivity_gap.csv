@@ -1,0 +1,13 @@
+prior,coupling,log_supermodular,decisions,choice_decisions,additive_picks_different_set,mean_true_leakage_regret_bits,max_true_leakage_regret_bits,mean_additivity_gap_bits,min_additivity_gap_bits,frac_underestimates
+independent,0.5,True,205,107,0,0,0,-6.6305e-17,-8.88178e-16,0
+independent,1.5,True,198,108,0,0,0,9.25186e-17,-4.44089e-16,0
+independent,3,True,115,51,0,0,0,1.25631e-16,-1.77636e-15,0
+ferro,0.5,True,267,181,0,0,0,0.0192522,0,0
+ferro,1.5,True,261,194,0,0,0,0.0170355,0.000216113,0
+ferro,3,True,298,284,0,0,0,0.00143708,0,0
+anti,0.5,False,196,93,0,0,0,-0.0323623,-0.413154,0.825
+anti,1.5,False,172,103,0,0,0,-0.274536,-1.12545,0.606061
+anti,3,False,97,25,0,0,0,-0.492495,-2.15163,0.769231
+mixed,0.5,False,153,61,0,0,0,0.036182,-0.0710632,0.166667
+mixed,1.5,False,202,104,0.00961538,0.000825779,0.085881,-0.0218241,-0.504468,0.447368
+mixed,3,False,275,242,0,0,0,-0.00516638,-0.150815,0.236842

@@ -1,0 +1,302 @@
+{
+  "name": "paysim",
+  "config": {
+    "name": "paysim",
+    "_comment": "Full PaySim run: all TRANSFER/CASH_OUT/PAYMENT/DEBIT rows (4,963,336). Downloads the public PaySim CSV once (494 MB, no account or key needed), verifies it against the published statistics, then streams it through the whole pipeline with constant memory. About 15-25 minutes on an 8-core laptop.",
+    "seed": 1,
+    "workers": 8,
+    "chunk": 2500,
+    "world": {
+      "source": "paysim",
+      "paysim_path": "data/paysim.csv",
+      "paysim_cache": "data/paysim_cache",
+      "n_banks": 60,
+      "n_payers": 500000,
+      "seed": 7,
+      "prior_sample": 20000,
+      "n_payments": null
+    },
+    "verification_scale": 1.0,
+    "e1_attrs": [
+      5,
+      10,
+      20,
+      40,
+      50
+    ],
+    "e1_reps": 20,
+    "e2_payments": 10000,
+    "e3_payments": 30000,
+    "e4_reps": 150,
+    "e5_base_payments": 100,
+    "e5_backends": [
+      "signed",
+      "sd",
+      "hashchain",
+      "bop"
+    ],
+    "e6_reps": 300,
+    "e11_reps": 8,
+    "e13_reps": 60,
+    "e14_payers": 1000,
+    "e15_payers": 2000,
+    "e16_T": 40,
+    "e16_payers": 300,
+    "e17_policies": 40,
+    "e18_reps": 60,
+    "e18_measure_reps": 200,
+    "e19_reps": 30,
+    "e20_reps": 12,
+    "e21_senders": 1000,
+    "e21_payments": 200,
+    "e22_reps": 400,
+    "scaling_payments": 24000,
+    "scaling_workers": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "e10_payments": 6000,
+    "progress_interval_s": 60
+  },
+  "versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "cryptography": "50.0.2",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "cpus": 8,
+    "gmpy2": "2.3.1"
+  },
+  "started": "2026-09-30T18:15:38",
+  "steps": [
+    {
+      "step": "data",
+      "seconds": 11.24,
+      "status": "ok",
+      "files": [
+        "results/paysim/paysim_verification.json"
+      ]
+    },
+    {
+      "step": "verification",
+      "seconds": 9.43,
+      "status": "ok",
+      "files": [
+        "results/paysim/verification_appendix.csv"
+      ]
+    },
+    {
+      "step": "e1",
+      "seconds": 6.84,
+      "status": "ok",
+      "files": [
+        "results/paysim/e1_mdps_optimality.csv",
+        "results/paysim/e1_mdps_summary.csv"
+      ]
+    },
+    {
+      "step": "e2",
+      "seconds": 2.18,
+      "status": "ok",
+      "files": [
+        "results/paysim/e2_mdps_latency.csv"
+      ]
+    },
+    {
+      "step": "e4",
+      "seconds": 0.75,
+      "status": "ok",
+      "files": [
+        "results/paysim/e4_deterministic_man.csv"
+      ]
+    },
+    {
+      "step": "e5",
+      "seconds": 10.98,
+      "status": "ok",
+      "files": [
+        "results/paysim/e5_attack_resistance.csv"
+      ]
+    },
+    {
+      "step": "e6",
+      "seconds": 6.71,
+      "status": "ok",
+      "files": [
+        "results/paysim/e6_crypto_backends.csv"
+      ]
+    },
+    {
+      "step": "e11",
+      "seconds": 0.2,
+      "status": "ok",
+      "files": [
+        "results/paysim/e11_selection_leakage.csv"
+      ]
+    },
+    {
+      "step": "e12",
+      "seconds": 0.08,
+      "status": "ok",
+      "files": [
+        "results/paysim/e12_leakage_cost_pareto.csv"
+      ]
+    },
+    {
+      "step": "e13",
+      "seconds": 5.9,
+      "status": "ok",
+      "files": [
+        "results/paysim/e13_bop_cost.csv"
+      ]
+    },
+    {
+      "step": "e14",
+      "seconds": 0.2,
+      "status": "ok",
+      "files": [
+        "results/paysim/e14_probing_attack.csv"
+      ]
+    },
+    {
+      "step": "e15",
+      "seconds": 4.17,
+      "status": "ok",
+      "files": [
+        "results/paysim/e15_ledger_utility.csv"
+      ]
+    },
+    {
+      "step": "e16",
+      "seconds": 1.01,
+      "status": "ok",
+      "files": [
+        "results/paysim/e16_cumulative_leakage.csv"
+      ]
+    },
+    {
+      "step": "e17",
+      "seconds": 0.42,
+      "status": "ok",
+      "files": [
+        "results/paysim/e17_additivity_gap.csv"
+      ]
+    },
+    {
+      "step": "e18",
+      "seconds": 5.25,
+      "status": "ok",
+      "files": [
+        "results/paysim/e18_fixed_charge_greedy.csv"
+      ]
+    },
+    {
+      "step": "e19",
+      "seconds": 33.52,
+      "status": "ok",
+      "files": [
+        "results/paysim/e19_stochastic_man.csv"
+      ]
+    },
+    {
+      "step": "e20",
+      "seconds": 1.46,
+      "status": "ok",
+      "files": [
+        "results/paysim/e20_policy_extraction.csv"
+      ]
+    },
+    {
+      "step": "e21",
+      "seconds": 0.01,
+      "status": "ok",
+      "files": [
+        "results/paysim/e21_rational_liar.csv"
+      ]
+    },
+    {
+      "step": "e22",
+      "seconds": 0.11,
+      "status": "ok",
+      "files": [
+        "results/paysim/e22_commitment_overhead.csv"
+      ]
+    },
+    {
+      "step": "e2e",
+      "seconds": 1294.21,
+      "status": "ok",
+      "files": [
+        "results/paysim/banks.csv",
+        "results/paysim/e2e_transactions.csv.gz",
+        "results/paysim/e7_latency.csv",
+        "results/paysim/h1_decision_fidelity.csv",
+        "results/paysim/h2_leakage_by_strategy.csv",
+        "results/paysim/h3_man_vs_blanket.csv",
+        "results/paysim/e8_decisions_by_scenario.csv",
+        "results/paysim/e8_decisions_by_tier.csv",
+        "results/paysim/e8_decisions_by_heterogeneity.csv",
+        "results/paysim/e3_disclosure_modes.csv",
+        "results/paysim/e7_throughput_scaling.csv",
+        "results/paysim/data_source.json"
+      ]
+    },
+    {
+      "step": "e10",
+      "seconds": 2.69,
+      "status": "ok",
+      "files": [
+        "results/paysim/e10_failure_injection.csv"
+      ]
+    }
+  ],
+  "figures": [
+    "paper_artifacts/figures/paysim/h2_leakage_by_strategy.png",
+    "paper_artifacts/figures/paysim/h1_decision_fidelity.png",
+    "paper_artifacts/figures/paysim/e12_pareto.png",
+    "paper_artifacts/figures/paysim/e14_probing.png",
+    "paper_artifacts/figures/paysim/e16_cumulative.png",
+    "paper_artifacts/figures/paysim/e1_mdps_latency.png",
+    "paper_artifacts/figures/paysim/e18_greedy.png",
+    "paper_artifacts/figures/paysim/e19_man.png",
+    "paper_artifacts/figures/paysim/e13_bop.png",
+    "paper_artifacts/figures/paysim/e7_throughput.png",
+    "paper_artifacts/figures/paysim/e10_failures.png"
+  ],
+  "finished": "2026-09-30T18:38:57",
+  "sha256": {
+    "banks.csv": "b40183ba116532be93e293a076ad96cc91d1db5b6ba797126b4ac82c867692ee",
+    "e10_failure_injection.csv": "cf7c8c38e5e8230bcb1060292a1ffbffab24940709cb1c995adeccb4307d460f",
+    "e11_selection_leakage.csv": "99c11279aed0d2db845ceea89039884e8b99ca767f44b76d4b7a20f9053f7398",
+    "e12_leakage_cost_pareto.csv": "cf334e51c022a86fb5e89b944f80efed2d352347eb6970f09aec8fb2aea62d44",
+    "e13_bop_cost.csv": "ed70bcf35b8ae07523a3d770b6373191a261be629a7ab0e137e64860408c0cfd",
+    "e14_probing_attack.csv": "33759b0fd9b6a827eb7b9637bfa7e4dd117e0ac77146fdd62245fc1f51931d2a",
+    "e15_ledger_utility.csv": "3e23b98faf726bc919acbd55a6a97baa86f05a30a014b444e697b59b8295a0de",
+    "e16_cumulative_leakage.csv": "1b6a69290764ddab086afa8c0e330675ba47e21954ddeea51917a0efcace40cb",
+    "e17_additivity_gap.csv": "3ecf44b7110d8719a170775469913c564db5084c4f636f8c252b53c4b1c92302",
+    "e18_fixed_charge_greedy.csv": "4bba958dcf706673b56b309c246ccfacf4dfcdf11437c515603e3b822b47d16a",
+    "e19_stochastic_man.csv": "dead02738d122caaa4a3c7341d92e129c20a9031628fb2bbe1430c0dc43727ff",
+    "e1_mdps_optimality.csv": "ef8dd9c8def46bbc277fdd8bae85c52cfdf6a8cd52c9d124d4a327932f59253c",
+    "e1_mdps_summary.csv": "01647d61b718b7c7d88cb1fb42748f86ac1000d7f0de9b31fd1040aa81277281",
+    "e20_policy_extraction.csv": "43ce768ef0232f7c9460b0ad8a21e730dfef48e7e41b349fc62fc12ba8db3afc",
+    "e21_rational_liar.csv": "c3c28abd5a6ed46d951db1f88212fa3407461555e368181fc70eafbc2e18f1d8",
+    "e22_commitment_overhead.csv": "dd1ec092b45d595ccd3b340fe3971ba226b1ec9a3d4d00e09e894dfa8bf022ee",
+    "e2_mdps_latency.csv": "7fac248905cbf49b171b85d6193b182b0da88d6b9665daa2b39a7c185db5471f",
+    "e3_disclosure_modes.csv": "ae9282aeb5f18c9346d958bbd85bd981a7578d67d02512a9faf6b67e5013ecdd",
+    "e4_deterministic_man.csv": "86fc08539bc096151bcd820caf863e9d6410c7e0cb268844f3e2caea6d42b0cc",
+    "e5_attack_resistance.csv": "6c2edf3050fb7c285826e47c1f8b24c899a7f3e209a92d5e08af511f39280da3",
+    "e6_crypto_backends.csv": "bd8eb3e3064d7584f8a4a6154b999d80c3101544161952c79945860cc81c7094",
+    "e7_latency.csv": "96308705c3b22a30c36e3721d1827a07fa6ef79429742432be074622182f367c",
+    "e7_throughput_scaling.csv": "3ef426f26e1c2ab4da89cdd47d821aea1b77f21058541ef76c870b1d5ab33c9a",
+    "e8_decisions_by_heterogeneity.csv": "1222448966f381aff2a164cf7815b87bd9dd638cdc10ff1499a627968ef8768d",
+    "e8_decisions_by_scenario.csv": "780d5d20b6ba0070c34dbf6e8e7f4665b326c4bdf7f52f0c8a096a1ad157b596",
+    "e8_decisions_by_tier.csv": "1378e030c14a246c6368fc2b2bcdca8f8de35cce2e261640cc4853eb101f7064",
+    "h1_decision_fidelity.csv": "c9ce71eccad746d60016f211adbfe2b6b71d33513d4aa609ca690667725eff2a",
+    "h2_leakage_by_strategy.csv": "4e26b3d0b69ccbe82cec99ef641822ec3f6d826fdd301f826cbf64de8c784a82",
+    "h3_man_vs_blanket.csv": "f9072ee31654f47778b4ca1be23785ceac354aab1b2e2b9dc7a80b429821d4de",
+    "verification_appendix.csv": "81317689552fad358aec50cf4d73e9ec154a02e5dcd04e336e6eef172c22463f"
+  }
+}

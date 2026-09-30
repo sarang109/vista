@@ -1,0 +1,4 @@
+scenario,payments,satisfiable_rate,initial_accept,initial_stepup,initial_hold,initial_reject,final_accept,final_hold,final_reject,stepup_resolved_rate,mean_stepup_rounds,mean_stepup_friction,mean_leakage_bits,mean_capsule_bytes,verification_failures
+normal,9926,0.73514,0.73514,0.253476,0.00402982,0.00735442,0.80546,0.000302237,0.194237,0.273083,1.2633,2.57023,0.608155,742.929,0
+ato_like,43,0,0,0,0,1,0,0,1,nan,nan,nan,0.106931,693.442,0
+scam_like,31,0.516129,0.516129,0.451613,0,0.0322581,0.580645,0,0.419355,0.142857,1.07143,2.10714,1.35308,936.935,0
