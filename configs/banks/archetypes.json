@@ -1,0 +1,40 @@
+{
+  "_comment": "Institution archetypes for the synthetic banking market (Sec 10). Rates are modelling assumptions for protocol evaluation, NOT real-world adoption statistics; run sensitivity analyses before drawing conclusions.",
+  "mix": {"modern": 0.3, "mainstream": 0.5, "legacy": 0.2},
+  "stance_mix": {"liberal": 0.25, "moderate": 0.5, "conservative": 0.25},
+  "archetypes": {
+    "modern": {
+      "auth_mix": {"fido2_passkey": 0.45, "totp": 0.10, "push_number_match": 0.30, "push": 0.05, "sms_otp": 0.10, "password": 0.0},
+      "dyn_link_rate": 0.92, "policy_exec_rate": 0.98, "device_bound_rate": 0.95, "backend": "sd",
+      "credential_layout": "grouped",
+      "profile": {
+        "auth_methods": {"fido2_passkey": {"auth_strength": "A3", "phishing_resistant": "true"}, "totp": {"auth_strength": "A2"},
+                          "push_number_match": {"auth_strength": "A2"}, "push": {"auth_strength": "A1"}, "sms_otp": {"auth_strength": "A1"}, "password": {"auth_strength": "A1"}},
+        "kyc_levels": {"basic": "L1", "standard": "L2", "enhanced": "L3"},
+        "device_established_days": 30, "supports_dynamic_binding": true, "supports_policy_attestation": true, "supports_device_binding": true
+      }
+    },
+    "mainstream": {
+      "auth_mix": {"fido2_passkey": 0.18, "totp": 0.12, "push_number_match": 0.30, "push": 0.15, "sms_otp": 0.25, "password": 0.0},
+      "dyn_link_rate": 0.65, "policy_exec_rate": 0.90, "device_bound_rate": 0.85, "backend": "signed",
+      "credential_layout": "fragmented",
+      "profile": {
+        "auth_methods": {"fido2_passkey": {"auth_strength": "A3", "phishing_resistant": "true"}, "totp": {"auth_strength": "A2"},
+                          "push_number_match": {"auth_strength": "A2"}, "push": {"auth_strength": "A1"}, "sms_otp": {"auth_strength": "A1"}, "password": {"auth_strength": "A1"}},
+        "kyc_levels": {"basic": "L1", "standard": "L2", "enhanced": "L3"},
+        "device_established_days": 45, "supports_dynamic_binding": true, "supports_policy_attestation": true, "supports_device_binding": true
+      }
+    },
+    "legacy": {
+      "auth_mix": {"fido2_passkey": 0.02, "totp": 0.05, "push_number_match": 0.0, "push": 0.10, "sms_otp": 0.63, "password": 0.20},
+      "dyn_link_rate": 0.0, "policy_exec_rate": 0.0, "device_bound_rate": 0.40, "backend": "signed",
+      "credential_layout": "fragmented",
+      "profile": {
+        "auth_methods": {"fido2_passkey": {"auth_strength": "A3", "phishing_resistant": "true"}, "totp": {"auth_strength": "A2"},
+                          "push": {"auth_strength": "A1"}, "sms_otp": {"auth_strength": "A1"}, "password": {"auth_strength": "A1"}},
+        "kyc_levels": {"basic": "L1", "standard": "L1", "enhanced": "L2"},
+        "device_established_days": 60, "supports_dynamic_binding": false, "supports_policy_attestation": false, "supports_device_binding": true
+      }
+    }
+  }
+}

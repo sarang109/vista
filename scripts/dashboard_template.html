@@ -1,0 +1,303 @@
+<title>VISTA Evaluation Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500&display=swap">
+<style>
+/* Layout: an evidence ledger for a paper draft. Hypothesis scoreboard first, then one section per
+   research question, each chart paired with the numbers that back it. */
+:root {
+  --bg: #f6f7f5; --panel: #fdfdfc; --ink: #14171a; --ink2: #4c5358; --muted: #80878c;
+  --line: #dfe3e1; --axis: #bfc5c3; --accent: #1d5c63;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4;
+  --good: #0ca30c; --good-ink: #006300; --warn: #b77800; --bad: #d03b3b;
+  --good-bg: #e5f3e5; --warn-bg: #fbf0d9; --bad-bg: #f8e3e3;
+  --display: "Newsreader", Georgia, serif; --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111413; --panel: #1a1d1c; --ink: #f2f4f3; --ink2: #c1c7c4; --muted: #8b928f;
+  --line: #2c302e; --axis: #3b403e; --accent: #6fb7be;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
+  --good: #0ca30c; --good-ink: #4fc94f; --warn: #fab219; --bad: #e66767;
+  --good-bg: #16301a; --warn-bg: #33290f; --bad-bg: #3a1c1c; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111413; --panel: #1a1d1c; --ink: #f2f4f3; --ink2: #c1c7c4; --muted: #8b928f;
+  --line: #2c302e; --axis: #3b403e; --accent: #6fb7be;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
+  --good: #0ca30c; --good-ink: #4fc94f; --warn: #fab219; --bad: #e66767;
+  --good-bg: #16301a; --warn-bg: #33290f; --bad-bg: #3a1c1c; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 14px/1.55 var(--sans); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 64px; display: grid; gap: 36px; }
+header { display: grid; gap: 10px; }
+.eyebrow { font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 500 clamp(28px, 4vw, 40px)/1.1 var(--display); margin: 0; text-wrap: balance; }
+h2 { font: 500 22px/1.2 var(--display); margin: 0; text-wrap: balance; }
+h3 { font: 600 13px/1.3 var(--sans); margin: 0; }
+p { margin: 0; max-width: 72ch; color: var(--ink2); }
+.lede { font-size: 15px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; display: grid; gap: 4px; }
+.tile .v { font: 500 24px/1.1 var(--sans); }
+.tile .l { font-size: 12px; color: var(--muted); }
+section { display: grid; gap: 14px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 16px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: grid; gap: 10px; min-width: 0; }
+.card .note { font-size: 12px; color: var(--muted); }
+.hyp { display: grid; gap: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+.hrow { display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: start; padding: 12px 16px; border-top: 1px solid var(--line); }
+.hrow:first-child { border-top: 0; }
+.hid { font: 500 13px var(--mono); color: var(--accent); padding-top: 1px; }
+.htext { display: grid; gap: 2px; min-width: 0; }
+.htext b { font-weight: 500; }
+.htext span { font-size: 12.5px; color: var(--ink2); font-variant-numeric: tabular-nums; }
+.pill { font: 500 11px/1 var(--mono); padding: 5px 8px; border-radius: 99px; white-space: nowrap; letter-spacing: .03em; }
+.pill.supported { background: var(--good-bg); color: var(--good-ink); }
+.pill.mixed { background: var(--warn-bg); color: var(--warn); }
+.pill.not { background: var(--bad-bg); color: var(--bad); }
+.pill::before { margin-right: 5px; }
+.pill.supported::before { content: "✓"; } .pill.mixed::before { content: "~"; } .pill.not::before { content: "✕"; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+svg text { fill: var(--muted); font: 10.5px var(--sans); }
+svg .lbl { fill: var(--ink2); }
+svg .grid { stroke: var(--line); stroke-width: 1; }
+svg .base { stroke: var(--axis); stroke-width: 1; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--ink2); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font: 500 11px var(--mono); color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+td.num, th.num { text-align: right; }
+td.wrap { white-space: normal; min-width: 260px; }
+.heat { display: inline-block; min-width: 42px; text-align: center; padding: 2px 6px; border-radius: 3px; font: 500 11.5px var(--mono); }
+.heat.z { color: var(--muted); } .heat.nz { background: var(--bad-bg); color: var(--bad); }
+.tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--bg); font: 12px var(--sans); padding: 6px 8px; border-radius: 4px; max-width: 260px; z-index: 5; }
+footer { font-size: 12px; color: var(--muted); display: grid; gap: 4px; }
+code { font: 12px var(--mono); }
+@media (max-width: 560px) { .hrow { grid-template-columns: 40px 1fr; } .hrow .pill { grid-column: 2; justify-self: start; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">VISTA · research artifact · results</div>
+    <h1>VISTA evaluation results</h1>
+    <p class="lede" id="lede"></p>
+  </header>
+  <div class="tiles" id="tiles"></div>
+
+  <section>
+    <h2>Hypotheses</h2>
+    <p>Each verdict is computed from the result CSVs by <code>scripts/build_dashboard.py</code>. A verdict is supported when the measured effect goes in the hypothesised direction on this workload. The workload is synthetic, so none of this is a real-world prevalence claim.</p>
+    <div class="hyp" id="hyp"></div>
+  </section>
+
+  <section>
+    <h2>Disclosure and decision quality</h2>
+    <div class="grid2">
+      <div class="card"><h3>Leakage per accepted payment (H2)</h3><div id="c-h2"></div>
+        <div class="note">Surprisal −log₂ π(X ≥ disclosed profile) under the population prior. BOP is the information floor −log₂ π(Φ = 1).</div></div>
+      <div class="card"><h3>Agreement with the receiver's own policy (H1)</h3><div id="c-h1"></div>
+        <div class="note">How often each approach reaches the decision the receiver's policy would reach on the sender's true evidence.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Selection channel and cumulative leakage</h2>
+    <div class="grid2">
+      <div class="card"><h3>Selection leakage vs cost overhead (E12)</h3><div class="legend" id="lg-e12"></div><div id="c-e12"></div>
+        <div class="note">Toy space from blueprint §21. DET is deterministic minimum-cost selection. EXP is the exponential mechanism. LP is the cost-optimal ε-private kernel. BOP proves every branch and leaks nothing through selection.</div></div>
+      <div class="card"><h3>Threshold probing against the ledger (E14)</h3><div class="legend" id="lg-e14"></div><div id="c-e14"></div>
+        <div class="note">Bits an adaptive receiver learns about a 128-value attribute. The ledger caps it at log₂(128/ρ).</div></div>
+      <div class="card"><h3>Cumulative leakage over repeated payments (E16)</h3><div class="legend" id="lg-e16"></div><div id="c-e16"></div></div>
+      <div class="card"><h3>Branch-oblivious proof cost (E13)</h3><div class="legend" id="lg-e13"></div><div id="c-e13"></div>
+        <div class="note">Generate + verify, median. CDS OR-proofs over a 2048-bit group; cost grows linearly with the number of branches.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Performance and dependability</h2>
+    <div class="grid2">
+      <div class="card"><h3>Throughput scaling (E7)</h3><div id="c-e7"></div></div>
+      <div class="card"><h3>Fail-closed under injected faults (E10)</h3><div id="c-e10"></div>
+        <div class="note">Share of satisfiable payments accepted each minute. Shaded bands: registry outage (status goes stale after 5 minutes), revoked issuer key until rotation, and schema rollout skew.</div></div>
+    </div>
+    <div class="card"><h3>Latency by component (E7)</h3><div class="tbl" id="t-lat"></div>
+      <div class="note">CPU-path components are measured. Rail latency is sampled from a lognormal (median 12 ms).</div></div>
+    <div class="card"><h3>Disclosure modes and proof backends (E3, E6)</h3><div class="tbl" id="t-e3"></div></div>
+  </section>
+
+  <section>
+    <h2>Attack resistance and ablations (E5)</h2>
+    <p>Acceptance rate of each attack against the full verifier and with one invariant removed, over every backend. Any cell above zero marks an attack that the removed check was stopping.</p>
+    <div class="card"><div class="tbl" id="t-e5"></div></div>
+  </section>
+
+  <section>
+    <h2>Decisions on the transaction stream</h2>
+    <div class="card"><h3>By latent scenario</h3><div class="tbl" id="t-scen"></div>
+      <div class="note">Scenario tags describe how the synthetic evidence was generated; they are not fraud labels. A deceived customer (scam_like) authenticates strongly, and VISTA does not claim to stop that.</div></div>
+    <div class="card"><h3>By sender archetype → receiver stance (E8)</h3><div class="tbl" id="t-het"></div></div>
+    <div class="card"><h3>Step-up: MAN-S vs blanket (H3, paired on identical payer outcomes)</h3><div class="tbl" id="t-h3"></div></div>
+  </section>
+
+  <section>
+    <h2>Verification appendix (blueprint §31, re-run)</h2>
+    <p>Numerical checks of each formal statement against brute force on small instances. These test the statements; they do not prove them.</p>
+    <div class="card"><div class="tbl" id="t-ver"></div></div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const D = /*__DATA__*/null;
+const $ = id => document.getElementById(id);
+const n = v => (v === "" || v === null || v === undefined) ? NaN : +v;
+const fmt = (v, d = 2) => isFinite(v) ? (+v).toLocaleString(undefined, {maximumFractionDigits: d, minimumFractionDigits: 0}) : "–";
+const pct = (v, d = 1) => isFinite(v) ? (100 * v).toFixed(d) + "%" : "–";
+const S = ["var(--s1)", "var(--s2)", "var(--s3)", "var(--s4)", "var(--s5)"];
+const tip = $("tip");
+function hover(el, html) {
+  el.addEventListener("mousemove", e => { tip.innerHTML = html; tip.hidden = false;
+    tip.style.left = Math.min(e.clientX + 12, innerWidth - 270) + "px"; tip.style.top = (e.clientY + 12) + "px"; });
+  el.addEventListener("mouseleave", () => tip.hidden = true);
+}
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function txt(parent, x, y, s, attrs = {}) { const t = el("text", Object.assign({x, y}, attrs), parent); t.textContent = s; return t; }
+function nice(max) { const p = Math.pow(10, Math.floor(Math.log10(max || 1))); for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= max) return m * p; return 10 * p; }
+function legend(id, names) { $(id).innerHTML = names.map((s, i) => `<span><i style="background:${S[i]}"></i>${s}</span>`).join(""); }
+
+function hbars(id, items, unit, max) {
+  const W = 520, rowH = 30, L = 170, H = items.length * rowH + 24;
+  const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, role: "img"}); $(id).appendChild(svg);
+  max = max || nice(Math.max(...items.map(d => d.v)));
+  const x = v => L + (W - L - 60) * v / max;
+  for (let k = 0; k <= 4; k++) { const v = max * k / 4; el("line", {x1: x(v), x2: x(v), y1: 0, y2: H - 20, class: "grid"}, svg);
+    txt(svg, x(v), H - 6, fmt(v, 2), {"text-anchor": "middle"}); }
+  items.forEach((d, i) => { const y = i * rowH + 6;
+    txt(svg, L - 8, y + 13, d.label, {"text-anchor": "end", class: "lbl"});
+    const r = el("rect", {x: L, y, width: Math.max(1, x(d.v) - L), height: 18, rx: 3, fill: d.color || S[0]}, svg);
+    txt(svg, x(d.v) + 6, y + 13, d.text || fmt(d.v, 2) + unit, {class: "lbl"});
+    hover(r, `<b>${d.label}</b><br>${d.text || fmt(d.v, 3) + unit}`); });
+}
+
+function lines(id, series, opt) {
+  const W = 520, H = 250, L = 46, B = 34, T = 10, R = 12;
+  const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, role: "img"}); $(id).appendChild(svg);
+  const all = series.flatMap(s => s.pts);
+  const xmax = opt.xmax ?? Math.max(...all.map(p => p[0])), xmin = opt.xmin ?? Math.min(...all.map(p => p[0]));
+  const ymax = opt.ymax ?? nice(Math.max(...all.map(p => p[1]))), ymin = opt.ymin ?? 0;
+  const fx = opt.xlog ? v => Math.log(Math.max(v, opt.xfloor || 1e-3)) : v => v;
+  const x = v => L + (W - L - R) * (fx(v) - fx(xmin)) / ((fx(xmax) - fx(xmin)) || 1);
+  const y = v => H - B - (H - B - T) * (v - ymin) / ((ymax - ymin) || 1);
+  (opt.bands || []).forEach(b => { el("rect", {x: x(b[0]), y: T, width: Math.max(2, x(b[1]) - x(b[0])), height: H - B - T, fill: "var(--line)", opacity: .7}, svg);
+    txt(svg, x(b[0]) + 3, T + 12, b[2], {class: "lbl"}); });
+  for (let k = 0; k <= 4; k++) { const v = ymin + (ymax - ymin) * k / 4;
+    el("line", {x1: L, x2: W - R, y1: y(v), y2: y(v), class: "grid"}, svg); txt(svg, L - 6, y(v) + 3, fmt(v, 2), {"text-anchor": "end"}); }
+  (opt.xticks || []).forEach(v => txt(svg, x(v), H - B + 14, fmt(v, 2), {"text-anchor": "middle"}));
+  el("line", {x1: L, x2: W - R, y1: H - B, y2: H - B, class: "base"}, svg);
+  txt(svg, (L + W - R) / 2, H - 4, opt.xlabel, {"text-anchor": "middle", class: "lbl"});
+  const yl = txt(svg, 12, (H - B) / 2, opt.ylabel, {"text-anchor": "middle", class: "lbl", transform: `rotate(-90 12 ${(H - B) / 2})`});
+  series.forEach((s, i) => { const c = s.color || S[i];
+    const pts = s.pts.slice().sort((a, b) => a[0] - b[0]);
+    if (pts.length > 1 && !s.dotsOnly) el("path", {d: pts.map((p, k) => (k ? "L" : "M") + x(p[0]) + " " + y(p[1])).join(""), fill: "none", stroke: c, "stroke-width": 2, "stroke-linejoin": "round"}, svg);
+    pts.forEach(p => { const dot = el("circle", {cx: x(p[0]), cy: y(p[1]), r: s.r || 3.5, fill: c, stroke: "var(--panel)", "stroke-width": 1.5}, svg);
+      const hit = el("circle", {cx: x(p[0]), cy: y(p[1]), r: 9, fill: "transparent"}, svg);
+      hover(hit, `<b>${s.name}</b><br>${opt.xlabel}: ${fmt(p[0], 3)}<br>${opt.ylabel}: ${fmt(p[1], 3)}`); }); });
+}
+
+function table(id, cols, rows) {
+  $(id).innerHTML = `<table><thead><tr>${cols.map(c => `<th class="${c.num ? "num" : ""}">${c.h}</th>`).join("")}</tr></thead><tbody>${
+    rows.map(r => `<tr>${cols.map(c => `<td class="${c.num ? "num" : ""} ${c.wrap ? "wrap" : ""}">${c.f(r)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+
+// ---------------------------------------------------------------- header
+const w = D.manifest.world, v = D.manifest.versions;
+const lat = Object.fromEntries(D.e7lat.map(r => [r.component, r]));
+const tput = D.e7lat.find(r => r.component === "throughput");
+$("lede").textContent = `${(+w.n_payments).toLocaleString()} interbank real-time payments from ${(+w.n_payers).toLocaleString()} payers across ${w.n_banks} institutions over ${w.days} simulated days. Every payment ran through real Ed25519, selective-disclosure, hash-chain and OR-proof cryptography, verification, the receiver's policy and MAN-S step-up. The security evidence is synthetic.`;
+const full5 = D.e5.filter(r => r.ablation === "full");
+const tiles = [
+  [fmt(n(tput.mean), 0) + "/s", `end-to-end throughput, ${tput.max}`],
+  [fmt(n(lat.e2e_ms.p99), 1) + " ms", "p99 end-to-end incl. simulated rail"],
+  [fmt(n(lat.verify_ms.p99), 2) + " ms", "p99 capsule verification"],
+  [`${full5.reduce((a, r) => a + +r.accepted, 0)} / ${full5.reduce((a, r) => a + +r.trials, 0).toLocaleString()}`, "attacks accepted by the full verifier"],
+  [`${D.ver.reduce((a, r) => a + +r.passed, 0).toLocaleString()} / ${D.ver.reduce((a, r) => a + +r.instances, 0).toLocaleString()}`, "§31 verification instances passed"],
+];
+$("tiles").innerHTML = tiles.map(t => `<div class="tile"><div class="v">${t[0]}</div><div class="l">${t[1]}</div></div>`).join("");
+$("hyp").innerHTML = D.verdicts.map(h => `<div class="hrow"><div class="hid">${h.h}</div><div class="htext"><b>${h.text}</b><span>${h.key}</span></div>
+  <div class="pill ${h.status === "supported" ? "supported" : h.status === "mixed" ? "mixed" : "not"}">${h.status}</div></div>`).join("");
+
+// ---------------------------------------------------------------- charts
+const lkName = {B2_raw_attributes: "Raw attributes (B2)", B4_vsac_disclose_all: "Disclose all (B4)", B3_fixed_bundle: "Fixed bundle (B3)",
+  VISTA_MDPS_DET: "VISTA MDPS", VISTA_BOP_floor: "VISTA BOP (floor)"};
+hbars("c-h2", D.h2.map(r => ({label: lkName[r.strategy] || r.strategy, v: n(r.mean_leakage_bits), text: fmt(n(r.mean_leakage_bits), 2) + " bits",
+  color: r.strategy.startsWith("VISTA") ? "var(--s1)" : "var(--axis)"})), " bits");
+const fidName = {B0_metadata_only: "Metadata only (B0)", B1_sender_risk_label: "Sender risk label (B1)", VISTA_initial: "VISTA"};
+hbars("c-h1", D.h1.map(r => ({label: fidName[r.approach] || r.approach, v: 100 * n(r.agreement_with_receiver_policy),
+  text: pct(n(r.agreement_with_receiver_policy)), color: r.approach.startsWith("VISTA") ? "var(--s1)" : "var(--axis)"})), "%", 100);
+
+const e12 = D.e12.filter(r => r.prior === "uniform");
+const modes = ["DET", "EXP", "LP", "BOP"]; legend("lg-e12", ["DET", "Exponential mechanism", "LP ε-optimal kernel", "BOP"]);
+lines("c-e12", modes.map(m => ({name: m, dotsOnly: m === "DET" || m === "BOP", r: m === "DET" || m === "BOP" ? 5 : 3.5,
+  pts: e12.filter(r => r.mode === m).map(r => [Math.max(n(r.cost_overhead) * 100, 0.05), n(r.Lambda_bits)])})),
+  {xlabel: "cost overhead vs DET (%, log scale)", ylabel: "selection leakage Λ (bits)", xlog: true, xmin: 0.05, xfloor: 0.05, xticks: [0.1, 1, 10, 100]});
+
+const rhos = [...new Set(D.e14.map(r => r.rho))];
+const rhoN = r => r === "no_ledger" ? 1 : +r;
+legend("lg-e14", ["binary search", "random", "fine scan", "bound"]);
+lines("c-e14", ["binary", "random", "scan"].map(st => ({name: st, pts: D.e14.filter(r => r.strategy === st).map(r => [rhoN(r.rho), n(r.max_bits_learned)])}))
+  .concat([{name: "bound log₂(128/ρ)", color: "var(--s4)", pts: D.e14.filter(r => r.strategy === "binary").map(r => [rhoN(r.rho), n(r.bound_bits)])}]),
+  {xlabel: "ledger resolution ρ (1 = no ledger)", ylabel: "max bits learned", xlog: true, xmin: 1, xticks: [1, 4, 8, 16, 32], ymax: 8});
+
+const e16s = ["disclose_all", "history_blind", "sticky"]; legend("lg-e16", ["disclose all (B4)", "history-blind MDPS", "sticky MDPS (history-aware)"]);
+lines("c-e16", e16s.map(s => ({name: s, r: 2, pts: D.e16.filter(r => r.strategy === s).map(r => [n(r.payment_index), n(r.mean_cumulative_bits)])})),
+  {xlabel: "payments to the same receiver", ylabel: "cumulative surprisal (bits)", xticks: [1, 10, 20, 30, 40]});
+
+legend("lg-e13", ["BOP (OR-proof)", "signed, cheapest branch"]);
+lines("c-e13", ["bop", "signed_cheapest_branch"].map(b => ({name: b, pts: D.e13.filter(r => r.backend === b).map(r => [n(r.branches), n(r.gen_p50_ms) + n(r.verify_p50_ms)])})),
+  {xlabel: "frontier branches |M(Φ)|", ylabel: "generate + verify (ms)", xticks: [1, 4, 8, 12, 16]});
+
+lines("c-e7", [{name: "throughput", pts: D.e7sc.map(r => [n(r.workers), n(r.throughput_tps)])}],
+  {xlabel: "worker processes", ylabel: "payments per second", xmin: 1, xticks: D.e7sc.map(r => n(r.workers))});
+
+const e10 = D.e10.filter(r => r.minute !== "summary");
+const band = ph => { const m = e10.filter(r => r.phase === ph).map(r => +r.minute); return m.length ? [Math.min(...m), Math.max(...m) + 1] : null; };
+lines("c-e10", [{name: "accepted | satisfiable", r: 2, pts: e10.map(r => [+r.minute, 100 * n(r.availability_when_satisfiable)])}],
+  {xlabel: "minute", ylabel: "accepted when satisfiable (%)", ymax: 100, xmin: 0,
+   xticks: [0, 10, 20, 30, 40, 50].filter(t => t <= +e10[e10.length - 1].minute),
+   bands: [["registry_outage", "outage"], ["key_revoked", "revoked"], ["schema_skew", "schema"]].map(([p, l]) => { const b = band(p); return b ? [b[0], b[1], l] : null; }).filter(Boolean)});
+
+// ---------------------------------------------------------------- tables
+table("t-lat", [{h: "component", f: r => r.component.replace("_ms", "")}, ...["p50", "p95", "p99", "max"].map(k => ({h: k + " (ms)", num: 1, f: r => fmt(n(r[k]), 3)}))],
+  D.e7lat.filter(r => r.component !== "throughput"));
+table("t-e3", [{h: "mode", f: r => r.mode}, {h: "backend", f: r => r.backend},
+  {h: "claims", num: 1, f: r => fmt(n(r.mean_claims_disclosed_when_satisfiable), 2)},
+  {h: "leakage (bits)", num: 1, f: r => fmt(n(r.mean_leakage_bits_when_satisfiable), 2)},
+  {h: "bytes", num: 1, f: r => fmt(n(r.mean_capsule_bytes), 0)},
+  {h: "gen p50 ms", num: 1, f: r => fmt(n(r.gen_p50_ms), 3)}, {h: "verify p50 ms", num: 1, f: r => fmt(n(r.verify_p50_ms), 3)},
+  {h: "matches policy", num: 1, f: r => pct(n(r.matches_receiver_policy))}], D.e3);
+const abl = [...new Set(D.e5.map(r => r.ablation))], atk = [...new Set(D.e5.map(r => r.attack))];
+const e5cell = (a, b) => { const rr = D.e5.filter(r => r.attack === a && r.ablation === b);
+  const acc = rr.reduce((s, r) => s + +r.accepted, 0), tot = rr.reduce((s, r) => s + +r.trials, 0);
+  const v = tot ? acc / tot : NaN; return `<span class="heat ${v > 0 ? "nz" : "z"}" title="${acc}/${tot}">${isFinite(v) ? (v > 0 ? (100 * v).toFixed(0) + "%" : "0") : "–"}</span>`; };
+table("t-e5", [{h: "attack", f: r => r}, {h: "expected defence", f: r => (D.e5.find(x => x.attack === r) || {}).expected_defense || ""},
+  ...abl.map(b => ({h: b.replace("no_", "−").replace(/_/g, " "), f: r => e5cell(r, b)}))], atk);
+const decCols = key => [{h: key, f: r => r[key]}, {h: "payments", num: 1, f: r => (+r.payments).toLocaleString()},
+  {h: "satisfiable", num: 1, f: r => pct(n(r.satisfiable_rate))}, {h: "accept", num: 1, f: r => pct(n(r.initial_accept))},
+  {h: "step-up", num: 1, f: r => pct(n(r.initial_stepup))}, {h: "hold", num: 1, f: r => pct(n(r.initial_hold))},
+  {h: "reject", num: 1, f: r => pct(n(r.initial_reject))}, {h: "final accept", num: 1, f: r => pct(n(r.final_accept))},
+  {h: "step-up resolved", num: 1, f: r => pct(n(r.stepup_resolved_rate))}, {h: "leak (bits)", num: 1, f: r => fmt(n(r.mean_leakage_bits), 2)}];
+table("t-scen", decCols("scenario"), D.e8s);
+table("t-het", decCols("heterogeneity"), D.e8h);
+table("t-h3", [{h: "strategy", f: r => r.strategy}, {h: "payments", num: 1, f: r => (+r.stepup_payments).toLocaleString()},
+  {h: "resolution", num: 1, f: r => r.strategy.startsWith("paired") ? (100 * n(r.resolution_rate)).toFixed(1) + " pts" : pct(n(r.resolution_rate))},
+  {h: "mean friction", num: 1, f: r => fmt(n(r.mean_friction), 2)}, {h: "friction / resolved", num: 1, f: r => fmt(n(r.friction_per_resolved), 2)},
+  {h: "user seconds", num: 1, f: r => fmt(n(r.mean_user_seconds), 1)}, {h: "95% CI (friction diff)", f: r => r.friction_ci95 || ""}], D.h3);
+table("t-ver", [{h: "#", f: r => r.id}, {h: "check", wrap: 1, f: r => r.check}, {h: "supports", f: r => r.supports},
+  {h: "passed", num: 1, f: r => `${(+r.passed).toLocaleString()} / ${(+r.instances).toLocaleString()}`}, {h: "result", wrap: 1, f: r => r.result}, {h: "tag", f: r => r.tag}], D.ver);
+$("foot").innerHTML = `<div>Run started ${D.manifest.started}, finished ${D.manifest.finished}. Python ${v.python}, numpy ${v.numpy}, scipy ${v.scipy}, cryptography ${v.cryptography}, gmpy2 ${v.gmpy2}; ${v.machine}, ${v.cpus} CPUs.</div>
+<div>Regenerate with <code>python -m vista.run_all --config configs/experiments/full.json</code>, then <code>python scripts/build_dashboard.py full</code>.</div>`;
+</script>

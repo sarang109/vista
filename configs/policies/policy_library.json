@@ -1,0 +1,24 @@
+{
+  "_comment": "Receiver policy library (Sec 3.3). Monotone AND/OR threshold policies, amount-tiered. Tiers in USD: micro < 100, standard < 1000, high < 10000, very_high >= 10000.",
+  "tiers_usd": {"micro": 100, "standard": 1000, "high": 10000},
+  "stances": {
+    "liberal": {
+      "micro": "auth_strength >= A1",
+      "standard": "auth_strength >= A1 AND (credential_age >= 7d OR device_continuity >= established)",
+      "high": "(auth_strength >= A3 AND credential_age >= 7d) OR (auth_strength >= A2 AND account_age >= 365d AND device_continuity >= established)",
+      "very_high": "(auth_strength >= A3 AND phishing_resistant >= true AND dynamic_binding >= true AND credential_age >= 7d) OR (auth_strength >= A2 AND dynamic_binding >= true AND device_continuity >= established AND account_age >= 365d)"
+    },
+    "moderate": {
+      "micro": "auth_strength >= A1 AND (credential_age >= 1d OR device_continuity >= established)",
+      "standard": "(auth_strength >= A3 AND credential_age >= 7d) OR (auth_strength >= A2 AND account_age >= 365d AND device_continuity >= established)",
+      "high": "(auth_strength >= A3 AND phishing_resistant >= true AND dynamic_binding >= true AND credential_age >= 7d) OR (auth_strength >= A2 AND dynamic_binding >= true AND device_continuity >= established AND account_age >= 365d)",
+      "very_high": "(auth_strength >= A3 AND phishing_resistant >= true AND dynamic_binding >= true AND credential_age >= 30d AND fraud_policy_executed >= true) OR (auth_strength >= A2 AND dynamic_binding >= true AND device_continuity >= established AND account_age >= 730d AND identity_assurance >= L2 AND fraud_policy_executed >= true)"
+    },
+    "conservative": {
+      "micro": "auth_strength >= A2 OR (auth_strength >= A1 AND device_continuity >= established AND credential_age >= 7d)",
+      "standard": "(auth_strength >= A3 AND phishing_resistant >= true AND dynamic_binding >= true AND credential_age >= 7d) OR (auth_strength >= A2 AND dynamic_binding >= true AND device_continuity >= established AND account_age >= 365d)",
+      "high": "(auth_strength >= A3 AND phishing_resistant >= true AND dynamic_binding >= true AND credential_age >= 30d AND fraud_policy_executed >= true) OR (auth_strength >= A2 AND dynamic_binding >= true AND device_continuity >= established AND account_age >= 730d AND identity_assurance >= L2 AND fraud_policy_executed >= true)",
+      "very_high": "(auth_strength >= A3 AND phishing_resistant >= true AND dynamic_binding >= true AND credential_age >= 30d AND fraud_policy_executed >= true AND identity_assurance >= L2) OR (auth_strength >= A3 AND dynamic_binding >= true AND device_continuity >= established AND account_age >= 730d AND identity_assurance >= L3 AND fraud_policy_executed >= true)"
+    }
+  }
+}

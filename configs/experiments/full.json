@@ -1,0 +1,21 @@
+{
+  "name": "full",
+  "_comment": "Paper-scale configuration: 300k payments, 150k payers, 60 institutions. ~15-30 min on an 8-core laptop.",
+  "seed": 1,
+  "workers": 8,
+  "chunk": 2500,
+  "world": {"n_banks": 60, "n_payers": 150000, "seed": 7, "prior_sample": 20000, "n_payments": 300000, "days": 7,
+            "paysim_path": "data/paysim.csv"},
+  "verification_scale": 1.0,
+  "e1_attrs": [5, 10, 20, 40, 50], "e1_reps": 20,
+  "e2_payments": 10000,
+  "e3_payments": 30000,
+  "e4_reps": 150,
+  "e5_base_payments": 100, "e5_backends": ["signed", "sd", "hashchain", "bop"],
+  "e6_reps": 300, "e11_reps": 8, "e13_reps": 60,
+  "e14_payers": 1000, "e15_payers": 2000, "e16_T": 40, "e16_payers": 300,
+  "e17_policies": 40, "e18_reps": 60, "e18_measure_reps": 200, "e19_reps": 30, "e20_reps": 12,
+  "e21_senders": 1000, "e21_payments": 200, "e22_reps": 400,
+  "scaling_payments": 24000, "scaling_workers": [1, 2, 4, 8],
+  "e10_payments": 6000
+}
