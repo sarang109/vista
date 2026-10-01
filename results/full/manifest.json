@@ -13,7 +13,7 @@
       "prior_sample": 20000,
       "n_payments": 300000,
       "days": 7,
-      "paysim_path": "data/paysim.csv"
+      "source": "synthetic"
     },
     "verification_scale": 1.0,
     "e1_attrs": [
@@ -68,11 +68,11 @@
     "cpus": 8,
     "gmpy2": "2.3.1"
   },
-  "started": "2026-09-30T15:02:34",
+  "started": "2026-10-01T12:01:27",
   "steps": [
     {
       "step": "verification",
-      "seconds": 9.41,
+      "seconds": 9.37,
       "status": "ok",
       "files": [
         "results/full/verification_appendix.csv"
@@ -80,7 +80,7 @@
     },
     {
       "step": "e1",
-      "seconds": 6.63,
+      "seconds": 6.55,
       "status": "ok",
       "files": [
         "results/full/e1_mdps_optimality.csv",
@@ -89,7 +89,7 @@
     },
     {
       "step": "e2",
-      "seconds": 2.13,
+      "seconds": 2.12,
       "status": "ok",
       "files": [
         "results/full/e2_mdps_latency.csv"
@@ -97,7 +97,7 @@
     },
     {
       "step": "e4",
-      "seconds": 0.72,
+      "seconds": 0.7,
       "status": "ok",
       "files": [
         "results/full/e4_deterministic_man.csv"
@@ -105,7 +105,7 @@
     },
     {
       "step": "e5",
-      "seconds": 10.91,
+      "seconds": 10.75,
       "status": "ok",
       "files": [
         "results/full/e5_attack_resistance.csv"
@@ -113,7 +113,7 @@
     },
     {
       "step": "e6",
-      "seconds": 6.7,
+      "seconds": 6.61,
       "status": "ok",
       "files": [
         "results/full/e6_crypto_backends.csv"
@@ -129,7 +129,7 @@
     },
     {
       "step": "e12",
-      "seconds": 0.09,
+      "seconds": 0.08,
       "status": "ok",
       "files": [
         "results/full/e12_leakage_cost_pareto.csv"
@@ -137,7 +137,7 @@
     },
     {
       "step": "e13",
-      "seconds": 5.64,
+      "seconds": 5.57,
       "status": "ok",
       "files": [
         "results/full/e13_bop_cost.csv"
@@ -153,7 +153,7 @@
     },
     {
       "step": "e15",
-      "seconds": 4.08,
+      "seconds": 4.07,
       "status": "ok",
       "files": [
         "results/full/e15_ledger_utility.csv"
@@ -161,7 +161,7 @@
     },
     {
       "step": "e16",
-      "seconds": 1.0,
+      "seconds": 0.99,
       "status": "ok",
       "files": [
         "results/full/e16_cumulative_leakage.csv"
@@ -177,7 +177,7 @@
     },
     {
       "step": "e18",
-      "seconds": 5.17,
+      "seconds": 5.06,
       "status": "ok",
       "files": [
         "results/full/e18_fixed_charge_greedy.csv"
@@ -185,7 +185,7 @@
     },
     {
       "step": "e19",
-      "seconds": 32.99,
+      "seconds": 33.02,
       "status": "ok",
       "files": [
         "results/full/e19_stochastic_man.csv"
@@ -193,7 +193,7 @@
     },
     {
       "step": "e20",
-      "seconds": 1.47,
+      "seconds": 1.44,
       "status": "ok",
       "files": [
         "results/full/e20_policy_extraction.csv"
@@ -209,7 +209,7 @@
     },
     {
       "step": "e22",
-      "seconds": 0.09,
+      "seconds": 0.11,
       "status": "ok",
       "files": [
         "results/full/e22_commitment_overhead.csv"
@@ -217,11 +217,11 @@
     },
     {
       "step": "e2e",
-      "seconds": 143.6,
+      "seconds": 111.49,
       "status": "ok",
       "files": [
-        "results/full/workload_transactions.csv",
         "results/full/banks.csv",
+        "results/full/workload_transactions.csv",
         "results/full/e2e_transactions.csv",
         "results/full/e7_latency.csv",
         "results/full/h1_decision_fidelity.csv",
@@ -231,12 +231,13 @@
         "results/full/e8_decisions_by_tier.csv",
         "results/full/e8_decisions_by_heterogeneity.csv",
         "results/full/e3_disclosure_modes.csv",
-        "results/full/e7_throughput_scaling.csv"
+        "results/full/e7_throughput_scaling.csv",
+        "results/full/data_source.json"
       ]
     },
     {
       "step": "e10",
-      "seconds": 1.83,
+      "seconds": 1.91,
       "status": "ok",
       "files": [
         "results/full/e10_failure_injection.csv"
@@ -256,38 +257,38 @@
     "paper_artifacts/figures/full/e7_throughput.png",
     "paper_artifacts/figures/full/e10_failures.png"
   ],
-  "finished": "2026-09-30T15:06:43",
+  "finished": "2026-10-01T12:04:48",
   "sha256": {
     "banks.csv": "b40183ba116532be93e293a076ad96cc91d1db5b6ba797126b4ac82c867692ee",
     "e10_failure_injection.csv": "8043bff455d77558000540a231bd5cfd0724a85974e49c474728fdedfcb95579",
     "e11_selection_leakage.csv": "99c11279aed0d2db845ceea89039884e8b99ca767f44b76d4b7a20f9053f7398",
     "e12_leakage_cost_pareto.csv": "cf334e51c022a86fb5e89b944f80efed2d352347eb6970f09aec8fb2aea62d44",
-    "e13_bop_cost.csv": "9be8fe896b213969985e1053b2165f23892ed6b92f67dbc2e72e488c87a2afe5",
+    "e13_bop_cost.csv": "5c4a4cef2a69e3446e35108f12588b5add98e154629d8f412432f18cb198678d",
     "e14_probing_attack.csv": "33759b0fd9b6a827eb7b9637bfa7e4dd117e0ac77146fdd62245fc1f51931d2a",
     "e15_ledger_utility.csv": "3e23b98faf726bc919acbd55a6a97baa86f05a30a014b444e697b59b8295a0de",
     "e16_cumulative_leakage.csv": "1b6a69290764ddab086afa8c0e330675ba47e21954ddeea51917a0efcace40cb",
     "e17_additivity_gap.csv": "3ecf44b7110d8719a170775469913c564db5084c4f636f8c252b53c4b1c92302",
-    "e18_fixed_charge_greedy.csv": "70efeb74a1cb27ebcd79edb1e3677839aa142c1b6856439c8f9936c86e65258f",
+    "e18_fixed_charge_greedy.csv": "c9aa2635c4ed491b3d418595cb0c55e631a5f6adff9690776c3e0b5012661500",
     "e19_stochastic_man.csv": "dead02738d122caaa4a3c7341d92e129c20a9031628fb2bbe1430c0dc43727ff",
-    "e1_mdps_optimality.csv": "e5b911e7b00c05e3bb8cdede118487d1b7f3004c4ddc037ca9477bd8a75bfa9c",
-    "e1_mdps_summary.csv": "fea15ca8cde16d038bad8dfe2449da3909c3ad2b4ff6d81f4ad346303e339b80",
+    "e1_mdps_optimality.csv": "77e7f68e250242c535c886b2172c5814e18d413b09c91ac0ae785afe95ae5030",
+    "e1_mdps_summary.csv": "a9f10c78a0c9df71a66f1010f5902d231930b1efda209ea17cbb8e7dbab77863",
     "e20_policy_extraction.csv": "43ce768ef0232f7c9460b0ad8a21e730dfef48e7e41b349fc62fc12ba8db3afc",
     "e21_rational_liar.csv": "c3c28abd5a6ed46d951db1f88212fa3407461555e368181fc70eafbc2e18f1d8",
-    "e22_commitment_overhead.csv": "f4db30de75da3de214f411817a9755cf6385fea2aecca58d10ac1d2b1fe22d60",
-    "e2_mdps_latency.csv": "141c9065cb0b8db891b6966b5f88e7f10a256e9b9b4ceae9a1788411aaa507a1",
-    "e2e_transactions.csv": "08e03a1257120e434f73bd5da4ef2c61de9093a91ff099d115832157734a66f6",
-    "e3_disclosure_modes.csv": "3058ea5a61f2f44b749a8051fb7e659a4f69fb0649f58d0ff68c1baea30e3b7d",
+    "e22_commitment_overhead.csv": "9448daff6af35de3e7426f81e35440c70f8410baac496007c88220a46b04748b",
+    "e2_mdps_latency.csv": "1510b50b2a790c9de05c0d16e7f85f4d5e08d81f8244b09ee65921bc24f3c878",
+    "e2e_transactions.csv": "0897969bf84e193b3cc00733af86d68acd39063ace3b0d1c1105b252f77e3965",
+    "e3_disclosure_modes.csv": "5294d45b08cf6eaa97f2826ff7d2432922d86f2005edf1368246eb14e9d149e4",
     "e4_deterministic_man.csv": "86fc08539bc096151bcd820caf863e9d6410c7e0cb268844f3e2caea6d42b0cc",
     "e5_attack_resistance.csv": "6c2edf3050fb7c285826e47c1f8b24c899a7f3e209a92d5e08af511f39280da3",
-    "e6_crypto_backends.csv": "97aeea4fd8302cbfe87d1e2aa82f789a46c45c5e49147447014838e26dfe8fea",
-    "e7_latency.csv": "fe91f37fde638d8e69599f7726b9778d2ab20e0fb1fd70a42148df0197fcc94f",
-    "e7_throughput_scaling.csv": "c53cfc7d5fb7c04d94dc8eb16561dcbc5a84dbd2244e84852a79620aa1409ce5",
-    "e8_decisions_by_heterogeneity.csv": "77107c6d30568a60bbc6ff87e3c7debb67bbbe03fc6afdbf47f55f523d4d425e",
-    "e8_decisions_by_scenario.csv": "1544eb02377aaa0fd20194177efe859193cb456c721bb7f4c7ea8202dffe21be",
-    "e8_decisions_by_tier.csv": "c8ed0a39ebd77c0e9e5e61bf283dedc2266c2a202e19e78228e24a047c43b060",
-    "h1_decision_fidelity.csv": "24f9afd1b883362897f22bbce9bea3e77b28de7f90e209820a1da08ace9b9e85",
-    "h2_leakage_by_strategy.csv": "dd69bbc6edcc6c73e50db04d2dbad7dbe6e24d38114d7279e1f2880212ecf4a2",
-    "h3_man_vs_blanket.csv": "b09019fc3e2a6fb180455038417e813c98758938ac2b50a8a8e52ffc6292de17",
+    "e6_crypto_backends.csv": "7bbbe1fa160a675968204b2c741db4fadf1fca0ec54fc8996d1edf7e6a0fac6b",
+    "e7_latency.csv": "17fdca0371eb2a680bbdc4e13a2c5a6f21764086e21459e78adba46c1b9b9a39",
+    "e7_throughput_scaling.csv": "6dc04fef12917b6b7181c41081d74fa5233c89df29055bb22d4007667e58066e",
+    "e8_decisions_by_heterogeneity.csv": "134c208ff402e73543e02458780736b4639a4c3fcfa49c7c8c4ba484de3e7976",
+    "e8_decisions_by_scenario.csv": "48826c5c85906c306976226318c08d1691e58e4ad9bdf2ad91706e16029abe70",
+    "e8_decisions_by_tier.csv": "1c5086237d8fa93751d8d4a467f8a5621d3c87ea170e4cdc191b4e2843816629",
+    "h1_decision_fidelity.csv": "5294af159cda1d21120fc86353301c0feb3947e4c01baf8a6aba8f5262975e75",
+    "h2_leakage_by_strategy.csv": "1cbe8dc7b2df2755d531c41e49178c4bdc47c67f35f65de4ac9a0e8e58d141d3",
+    "h3_man_vs_blanket.csv": "5cf4c3c62b00dcbd1fe5d66a6cc270b4126e8a276c31afe07775e8b6a4e070a1",
     "verification_appendix.csv": "81317689552fad358aec50cf4d73e9ec154a02e5dcd04e336e6eef172c22463f",
     "workload_transactions.csv": "3eadd8272b65d5a11254ea38ce21ed735d04389910f28aa02a586c737f162e6f"
   }

@@ -70,11 +70,11 @@
     "cpus": 8,
     "gmpy2": "2.3.1"
   },
-  "started": "2026-09-30T18:15:38",
+  "started": "2026-10-01T12:04:49",
   "steps": [
     {
       "step": "data",
-      "seconds": 11.24,
+      "seconds": 0.27,
       "status": "ok",
       "files": [
         "results/paysim/paysim_verification.json"
@@ -82,7 +82,7 @@
     },
     {
       "step": "verification",
-      "seconds": 9.43,
+      "seconds": 9.51,
       "status": "ok",
       "files": [
         "results/paysim/verification_appendix.csv"
@@ -90,7 +90,7 @@
     },
     {
       "step": "e1",
-      "seconds": 6.84,
+      "seconds": 6.52,
       "status": "ok",
       "files": [
         "results/paysim/e1_mdps_optimality.csv",
@@ -99,7 +99,7 @@
     },
     {
       "step": "e2",
-      "seconds": 2.18,
+      "seconds": 2.23,
       "status": "ok",
       "files": [
         "results/paysim/e2_mdps_latency.csv"
@@ -107,7 +107,7 @@
     },
     {
       "step": "e4",
-      "seconds": 0.75,
+      "seconds": 0.72,
       "status": "ok",
       "files": [
         "results/paysim/e4_deterministic_man.csv"
@@ -115,7 +115,7 @@
     },
     {
       "step": "e5",
-      "seconds": 10.98,
+      "seconds": 11.25,
       "status": "ok",
       "files": [
         "results/paysim/e5_attack_resistance.csv"
@@ -123,7 +123,7 @@
     },
     {
       "step": "e6",
-      "seconds": 6.71,
+      "seconds": 6.69,
       "status": "ok",
       "files": [
         "results/paysim/e6_crypto_backends.csv"
@@ -147,7 +147,7 @@
     },
     {
       "step": "e13",
-      "seconds": 5.9,
+      "seconds": 5.59,
       "status": "ok",
       "files": [
         "results/paysim/e13_bop_cost.csv"
@@ -163,7 +163,7 @@
     },
     {
       "step": "e15",
-      "seconds": 4.17,
+      "seconds": 4.07,
       "status": "ok",
       "files": [
         "results/paysim/e15_ledger_utility.csv"
@@ -171,7 +171,7 @@
     },
     {
       "step": "e16",
-      "seconds": 1.01,
+      "seconds": 1.0,
       "status": "ok",
       "files": [
         "results/paysim/e16_cumulative_leakage.csv"
@@ -179,7 +179,7 @@
     },
     {
       "step": "e17",
-      "seconds": 0.42,
+      "seconds": 0.43,
       "status": "ok",
       "files": [
         "results/paysim/e17_additivity_gap.csv"
@@ -187,7 +187,7 @@
     },
     {
       "step": "e18",
-      "seconds": 5.25,
+      "seconds": 5.05,
       "status": "ok",
       "files": [
         "results/paysim/e18_fixed_charge_greedy.csv"
@@ -195,7 +195,7 @@
     },
     {
       "step": "e19",
-      "seconds": 33.52,
+      "seconds": 33.1,
       "status": "ok",
       "files": [
         "results/paysim/e19_stochastic_man.csv"
@@ -203,7 +203,7 @@
     },
     {
       "step": "e20",
-      "seconds": 1.46,
+      "seconds": 1.44,
       "status": "ok",
       "files": [
         "results/paysim/e20_policy_extraction.csv"
@@ -227,7 +227,7 @@
     },
     {
       "step": "e2e",
-      "seconds": 1294.21,
+      "seconds": 1243.17,
       "status": "ok",
       "files": [
         "results/paysim/banks.csv",
@@ -246,7 +246,7 @@
     },
     {
       "step": "e10",
-      "seconds": 2.69,
+      "seconds": 2.66,
       "status": "ok",
       "files": [
         "results/paysim/e10_failure_injection.csv"
@@ -266,31 +266,31 @@
     "paper_artifacts/figures/paysim/e7_throughput.png",
     "paper_artifacts/figures/paysim/e10_failures.png"
   ],
-  "finished": "2026-09-30T18:38:57",
+  "finished": "2026-10-01T12:27:04",
   "sha256": {
     "banks.csv": "b40183ba116532be93e293a076ad96cc91d1db5b6ba797126b4ac82c867692ee",
     "e10_failure_injection.csv": "cf7c8c38e5e8230bcb1060292a1ffbffab24940709cb1c995adeccb4307d460f",
     "e11_selection_leakage.csv": "99c11279aed0d2db845ceea89039884e8b99ca767f44b76d4b7a20f9053f7398",
     "e12_leakage_cost_pareto.csv": "cf334e51c022a86fb5e89b944f80efed2d352347eb6970f09aec8fb2aea62d44",
-    "e13_bop_cost.csv": "ed70bcf35b8ae07523a3d770b6373191a261be629a7ab0e137e64860408c0cfd",
+    "e13_bop_cost.csv": "899b97f44450a9575731918113e2d0054dad2d02a3c83ce97cf3828da7c0f582",
     "e14_probing_attack.csv": "33759b0fd9b6a827eb7b9637bfa7e4dd117e0ac77146fdd62245fc1f51931d2a",
     "e15_ledger_utility.csv": "3e23b98faf726bc919acbd55a6a97baa86f05a30a014b444e697b59b8295a0de",
     "e16_cumulative_leakage.csv": "1b6a69290764ddab086afa8c0e330675ba47e21954ddeea51917a0efcace40cb",
     "e17_additivity_gap.csv": "3ecf44b7110d8719a170775469913c564db5084c4f636f8c252b53c4b1c92302",
-    "e18_fixed_charge_greedy.csv": "4bba958dcf706673b56b309c246ccfacf4dfcdf11437c515603e3b822b47d16a",
+    "e18_fixed_charge_greedy.csv": "5f7dc0b4366530524461342d235c509d76c72cb40680ef0e4f845b1b0aa33a4d",
     "e19_stochastic_man.csv": "dead02738d122caaa4a3c7341d92e129c20a9031628fb2bbe1430c0dc43727ff",
-    "e1_mdps_optimality.csv": "ef8dd9c8def46bbc277fdd8bae85c52cfdf6a8cd52c9d124d4a327932f59253c",
-    "e1_mdps_summary.csv": "01647d61b718b7c7d88cb1fb42748f86ac1000d7f0de9b31fd1040aa81277281",
+    "e1_mdps_optimality.csv": "535c98248aaf92935f70192edf7545a236d0439bf8a06b9be64fee46a4286ff0",
+    "e1_mdps_summary.csv": "a339e60bdd3d27646755f07d7b1ea7dff9b3027b6e091b0b81b8e6ec58e25939",
     "e20_policy_extraction.csv": "43ce768ef0232f7c9460b0ad8a21e730dfef48e7e41b349fc62fc12ba8db3afc",
     "e21_rational_liar.csv": "c3c28abd5a6ed46d951db1f88212fa3407461555e368181fc70eafbc2e18f1d8",
-    "e22_commitment_overhead.csv": "dd1ec092b45d595ccd3b340fe3971ba226b1ec9a3d4d00e09e894dfa8bf022ee",
-    "e2_mdps_latency.csv": "7fac248905cbf49b171b85d6193b182b0da88d6b9665daa2b39a7c185db5471f",
-    "e3_disclosure_modes.csv": "ae9282aeb5f18c9346d958bbd85bd981a7578d67d02512a9faf6b67e5013ecdd",
+    "e22_commitment_overhead.csv": "1a94a4cefce5e17ab0a68a4869eac1fc6ed8d446875504b41cd834f11d86cc8c",
+    "e2_mdps_latency.csv": "b4ee04a449e4c27a1e1ecd2fe082a9bab6cd29b28c7246e0e04eb2777a064d9a",
+    "e3_disclosure_modes.csv": "6fc360eb45da6fb48b3fa9279ca1137f79f1bd0219f7c6bc0a371a4a91241f2f",
     "e4_deterministic_man.csv": "86fc08539bc096151bcd820caf863e9d6410c7e0cb268844f3e2caea6d42b0cc",
     "e5_attack_resistance.csv": "6c2edf3050fb7c285826e47c1f8b24c899a7f3e209a92d5e08af511f39280da3",
-    "e6_crypto_backends.csv": "bd8eb3e3064d7584f8a4a6154b999d80c3101544161952c79945860cc81c7094",
-    "e7_latency.csv": "96308705c3b22a30c36e3721d1827a07fa6ef79429742432be074622182f367c",
-    "e7_throughput_scaling.csv": "3ef426f26e1c2ab4da89cdd47d821aea1b77f21058541ef76c870b1d5ab33c9a",
+    "e6_crypto_backends.csv": "a5b02f79f6973c90b6c224be09c463ca7225f878abbe35a3cd5b0a110a0f6b9f",
+    "e7_latency.csv": "60c864da238d2aa096314d803061ddc994f3c44429910ab4c86e70d12471799a",
+    "e7_throughput_scaling.csv": "0f4bb6178b92be888f5bcc94a319ea8edcaf347ebca088c1eed9f4f0ff172d45",
     "e8_decisions_by_heterogeneity.csv": "1222448966f381aff2a164cf7815b87bd9dd638cdc10ff1499a627968ef8768d",
     "e8_decisions_by_scenario.csv": "780d5d20b6ba0070c34dbf6e8e7f4665b326c4bdf7f52f0c8a096a1ad157b596",
     "e8_decisions_by_tier.csv": "1378e030c14a246c6368fc2b2bcdca8f8de35cce2e261640cc4853eb101f7064",

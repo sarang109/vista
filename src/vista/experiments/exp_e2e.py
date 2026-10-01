@@ -108,6 +108,11 @@ def _columns(rows: list[dict]) -> dict:
 def _process(task):
     start, stop, stride, mode, backend, detail, want_csv = task
     world, wc = _G["world"], _G["wc"]
+    # Receivers (and their replay caches) persist inside a worker process. E3 re-sends the same payments
+    # (same PID and deterministic nonce) in several modes, so without this reset the later modes are
+    # rejected as replays. Replay defence itself is exercised separately in E5.
+    for _r in getattr(world, "_receivers", {}).values():
+        _r.verifier.seen_pids.clear()
     idx = np.arange(start, stop, stride)
     pay = _G["src"].take(idx, world)
     rows = []

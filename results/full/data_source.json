@@ -1,0 +1,7 @@
+{
+  "kind": "synthetic",
+  "rows_used": 300000,
+  "payers_in_population": 150000,
+  "banks": 60,
+  "percentile_method": "log histogram, ~0.8% relative bin width (latencies); 0.01-bit bins (leakage)"
+}

@@ -65,11 +65,11 @@
     "cpus": 8,
     "gmpy2": "2.3.1"
   },
-  "started": "2026-09-30T18:14:26",
+  "started": "2026-10-01T12:00:56",
   "steps": [
     {
       "step": "verification",
-      "seconds": 2.34,
+      "seconds": 2.32,
       "status": "ok",
       "files": [
         "results/smoke/verification_appendix.csv"
@@ -77,7 +77,7 @@
     },
     {
       "step": "e1",
-      "seconds": 1.1,
+      "seconds": 1.02,
       "status": "ok",
       "files": [
         "results/smoke/e1_mdps_optimality.csv",
@@ -86,7 +86,7 @@
     },
     {
       "step": "e2",
-      "seconds": 0.28,
+      "seconds": 0.27,
       "status": "ok",
       "files": [
         "results/smoke/e2_mdps_latency.csv"
@@ -102,7 +102,7 @@
     },
     {
       "step": "e5",
-      "seconds": 1.07,
+      "seconds": 1.14,
       "status": "ok",
       "files": [
         "results/smoke/e5_attack_resistance.csv"
@@ -110,7 +110,7 @@
     },
     {
       "step": "e6",
-      "seconds": 0.67,
+      "seconds": 0.66,
       "status": "ok",
       "files": [
         "results/smoke/e6_crypto_backends.csv"
@@ -126,7 +126,7 @@
     },
     {
       "step": "e12",
-      "seconds": 0.08,
+      "seconds": 0.09,
       "status": "ok",
       "files": [
         "results/smoke/e12_leakage_cost_pareto.csv"
@@ -134,7 +134,7 @@
     },
     {
       "step": "e13",
-      "seconds": 0.93,
+      "seconds": 0.96,
       "status": "ok",
       "files": [
         "results/smoke/e13_bop_cost.csv"
@@ -150,7 +150,7 @@
     },
     {
       "step": "e15",
-      "seconds": 0.6,
+      "seconds": 0.61,
       "status": "ok",
       "files": [
         "results/smoke/e15_ledger_utility.csv"
@@ -182,7 +182,7 @@
     },
     {
       "step": "e19",
-      "seconds": 4.96,
+      "seconds": 4.97,
       "status": "ok",
       "files": [
         "results/smoke/e19_stochastic_man.csv"
@@ -214,7 +214,7 @@
     },
     {
       "step": "e2e",
-      "seconds": 11.95,
+      "seconds": 13.96,
       "status": "ok",
       "files": [
         "results/smoke/banks.csv",
@@ -234,7 +234,7 @@
     },
     {
       "step": "e10",
-      "seconds": 0.77,
+      "seconds": 0.8,
       "status": "ok",
       "files": [
         "results/smoke/e10_failure_injection.csv"
@@ -254,32 +254,32 @@
     "paper_artifacts/figures/smoke/e7_throughput.png",
     "paper_artifacts/figures/smoke/e10_failures.png"
   ],
-  "finished": "2026-09-30T18:15:08",
+  "finished": "2026-10-01T12:01:26",
   "sha256": {
     "banks.csv": "001fa0b2d3c008ae221fabd15db8a0034709bde7afccbea5d14c156de0c419bf",
     "e10_failure_injection.csv": "b2355d7d2342f9b1ebd8cf7bb0a54d8d98d18ad5602569f8d39c234d0e86f2dd",
     "e11_selection_leakage.csv": "a112933cd16adc1ded87c55d8635224d0ef56588919d0f40bf0dcf6b241da410",
     "e12_leakage_cost_pareto.csv": "cf334e51c022a86fb5e89b944f80efed2d352347eb6970f09aec8fb2aea62d44",
-    "e13_bop_cost.csv": "2d0ddb362a92a47afc457295e7ff1a76878eb0f53cab9b9608fb1019fae027a8",
+    "e13_bop_cost.csv": "0efc7cb497bbe117256e64454aedd539f1b26a655bf6ac6607ed2dacf51a526f",
     "e14_probing_attack.csv": "d90b8d69c2fe2fce9305f5e2bc1cc694eb8eab4d8f22f4a7fd137143e9bcb4a9",
     "e15_ledger_utility.csv": "9ca53d25dab0f784ee6dce163bdb876527c14d95911bfd35e4de715596e9ae63",
     "e16_cumulative_leakage.csv": "933a0f9fd5e9c8f5cc1775db17d16377f03b6abb50aa419093d02577786227fa",
     "e17_additivity_gap.csv": "003c7528b91025bafba39f0f754b7fd025c1e4d2bd88208191946356887932e7",
-    "e18_fixed_charge_greedy.csv": "f9059565b0a80b3c585dfcce1797c33b62d65c8408196b3dc117c9bc264102ed",
+    "e18_fixed_charge_greedy.csv": "ddbc1d7ef52e3ccdee9904d68f020edd2e1b83305be67766d047c4b9ca93ca89",
     "e19_stochastic_man.csv": "94b07782fd45964f69dc402ae63975987fc6b58e6c45d85ad22111fdccce8b18",
-    "e1_mdps_optimality.csv": "459f34a9d3541248e07d1e4ee355ab8bfacb781360087dc06764f63360147096",
-    "e1_mdps_summary.csv": "fa716cf5e26a47a5ac7df889f944d1440cfc642e15a70063dac20b0807062943",
+    "e1_mdps_optimality.csv": "db8daede6af102d376f2df404470aeaed03e61ae50aaf54ee5753d9a8af91a24",
+    "e1_mdps_summary.csv": "54992ebbc911dcbadf9ab651c9725b7580418f4d6b24507e912faa9cf98d3843",
     "e20_policy_extraction.csv": "2ae39a47efffeff9cc0ea519aea0af6a1d06c29dfb15ae36759ec0c5ba57712f",
     "e21_rational_liar.csv": "a6119da23a2d8344afc55280b186e32a90bbafb0ea93d0733a5ac83f0e9e4cc0",
-    "e22_commitment_overhead.csv": "21a09394580d3393612ef7cf997e433902cca438e1e7cb730fecc4078a061268",
-    "e2_mdps_latency.csv": "88de458e15eccd52c53ea33b5251bf2ee48def633aff7fc808681527c6597e22",
-    "e2e_transactions.csv": "87ef05a3b22c1af0e397746f9c2b6463153ef7b138b179bb1d4424a24f7302c9",
-    "e3_disclosure_modes.csv": "da7fde4bf4dd8e282f8c2bf13f939c6b01ce8cdbeee5092555f3a81fd20445b2",
+    "e22_commitment_overhead.csv": "03cfabd8a10f024edc5ca2cd98ce964bc1f4e7e66d85c2678a7698564998e94b",
+    "e2_mdps_latency.csv": "98ce9517912afc2d537edd04bb786ea8aa9e8de67ad9eb115b736955fb3a3a7b",
+    "e2e_transactions.csv": "078e431ed2b7e33a4f61a21e6843e8965a47aa1994e838a07d0f6c2f428b06c4",
+    "e3_disclosure_modes.csv": "c40a09835dcc89ea086b56dbb4bcf1cb35c7ae88f8cd78c5c4f4c36585265252",
     "e4_deterministic_man.csv": "897da47c587aebfcee4bf269da43d6b2eb4792b8a427e9741e7149b8e0c73fb9",
     "e5_attack_resistance.csv": "53087a86b67a078702580a9a4f2dfdbcc29d2d7494da6557bbb6d484e918e1bb",
-    "e6_crypto_backends.csv": "d7a85f6ef6263581d99aa2d49ce5cfd2a75fbc3a6fe2d8372a54f9cb814567cb",
-    "e7_latency.csv": "adecdc09d2be3f7786e3023ec905c98780a343f7705ddc592d3c6cdf9267a42a",
-    "e7_throughput_scaling.csv": "a36798ef8652797d3fb67982a3bab7b94353284aa51a924b09e8d54f6515ae2d",
+    "e6_crypto_backends.csv": "6f070d146dffe178284b785d5cc5e8a9c1a9e0a8007e6877c9297467074417f1",
+    "e7_latency.csv": "7a2e303d6cc6036785996054b0355b69c3842f28456e6a05a4915f18e1258821",
+    "e7_throughput_scaling.csv": "52a4fafa3ada8e1d83d94a44b2bd8f2cb52938d6aeeb16abf6f626b28098bf0b",
     "e8_decisions_by_heterogeneity.csv": "aece2a962f831ddc63594ad75a0a5c171bb9297710515ca8ad1e7a8655689d0f",
     "e8_decisions_by_scenario.csv": "dad061e89a56eba5728fc0fce067daa63e1e6a1239d1865b1df66d6907eba9d3",
     "e8_decisions_by_tier.csv": "253239213308e238878e88c5d35a81d6b1f67f5490f21bd0f1711afc2cb71673",
