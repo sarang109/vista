@@ -69,7 +69,7 @@ def main(argv=None):
     only = {s for s in args.only.split(",") if s}
 
     from .experiments import exp_attacks, exp_crypto, exp_e2e, exp_ledger, exp_mdps, exp_misc, exp_selection
-    from .experiments import exp_verification
+    from .experiments import exp_frontier, exp_governor, exp_grace, exp_realprior, exp_repeated, exp_verification
     from .simulator.world import World
 
     world_holder = {}
@@ -100,8 +100,14 @@ def main(argv=None):
         ("e20", lambda: exp_misc.run_e20(cfg, out)),
         ("e21", lambda: exp_misc.run_e21(cfg, out)),
         ("e22", lambda: exp_misc.run_e22(cfg, out)),
+        ("e23", lambda: exp_frontier.run_e23(cfg, out)),
+        ("e24", lambda: exp_frontier.run_e24(cfg, out)),
+        ("e26", lambda: exp_realprior.run_e26(cfg, out)),
         ("e2e", lambda: exp_e2e.run(cfg, out)),
         ("e10", lambda: exp_e2e.run_e10(cfg, out)),
+        ("e25", lambda: exp_repeated.run_e25(cfg, out)),
+        ("e27", lambda: exp_governor.run_e27(cfg, out)),
+        ("e28", lambda: exp_grace.run_e28(cfg, out)),
     ]
     if cfg["world"].get("source") == "paysim":
         def prep():

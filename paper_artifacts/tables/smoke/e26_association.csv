@@ -1,0 +1,7 @@
+chain_i,chain_j,n,tp2_minors,tp2_significant_violations,min_log_odds_ratio,pqd_significant_violations,min_pqd_diff,spearman
+device_continuity,account_age,582736,9,5,-1.11758,0,0.0550639,0.402365
+device_continuity,auth_freshness,582736,9,2,-0.805101,0,0.0406343,0.49067
+device_continuity,network_continuity,582736,9,4,-1.28416,0,0.0680436,0.65417
+account_age,auth_freshness,582736,7,4,-2.1668,3,-0.0112511,0.126469
+account_age,network_continuity,582736,9,5,-0.762441,0,0.0804965,0.539538
+auth_freshness,network_continuity,582736,9,3,-0.965333,0,0.0411444,0.474394

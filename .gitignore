@@ -16,3 +16,7 @@ results/*/e2e_transactions.csv.gz
 results/*/workload_transactions.csv
 results/*.log
 .vscode/
+
+# the RBA login dataset and its derived cache (downloaded on demand from Zenodo)
+data/rba/
+data/rba_cache/

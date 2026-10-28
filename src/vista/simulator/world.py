@@ -15,6 +15,7 @@ import numpy as np
 from .. import payment as paymod
 from ..claims import DEFAULT_SCHEMA
 from ..crypto.signed import SigningKey
+from ..governor import Governor, GovernorConfig
 from ..man import Action
 from ..policy import frontier, parse, policy_hash
 from ..prior import Prior
@@ -126,8 +127,9 @@ class World:
 
     # ------------------------------------------------------------------ engines
     def sender(self, b: int, mode: str = "DET", backend: str | None = None, lam: float = 1.0, log=None,
-               cache: bool = True) -> SenderFI:
-        key = (b, mode, backend, lam, id(log), cache)
+               cache: bool = True, gov: GovernorConfig | None = None) -> SenderFI:
+        """gov: a GovernorConfig for mode 'IDG' (each sender institution runs its own governor)."""
+        key = (b, mode, backend, lam, id(log), cache, gov.name if gov else None)
         if key not in self._senders:
             bank = self.banks[b]
             A = self.arche["archetypes"][bank.archetype]
@@ -135,10 +137,15 @@ class World:
             layout = GROUPED if A["credential_layout"] == "grouped" else FRAGMENTED
             fixed = tuple(min(3, a.d) if a.name in ("auth_strength",) else a.d if a.d == 1 else min(2, a.d)
                           for a in S.attributes)
+            governor = None
+            if gov is not None:
+                governor = Governor(bank.id, S, self.prior, self.cost, gov, layout,
+                                    sha256(f"{self.seed}|{bank.id}|governor".encode()),
+                                    np.random.default_rng([self.seed, b, 77]))
             self._senders[key] = SenderFI(
                 bank.id, S, iss, att, self.cost, A["profile"], backend or A["backend"], mode, lam, layout, log,
                 fixed_bundle=fixed, rng=np.random.default_rng(self.seed * 1000 + b), cache=cache,
-                actions=self.planning_actions)
+                actions=self.planning_actions, governor=governor)
         return self._senders[key]
 
     def receiver(self, b: int, cfg: VerifyConfig | None = None, budget: float = 12.0, p_min: float = 0.3,

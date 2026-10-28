@@ -1,0 +1,11 @@
+family,strategy,passes_DET_at_n,Lambda_1,Lambda_max_n,Lambda_DET
+policy_library,RAND_fresh,3,0.0649884,0.523498,0.215949
+policy_library,PCGS_fresh,3,0.0740867,0.422069,0.215949
+toy_64_state,RAND_fresh,3,0.131655,0.765524,0.410936
+toy_64_state,PCGS_fresh,3,0.283955,0.490134,0.410936
+v1_e11_anti,RAND_fresh,3,0.0909239,0.272459,0.16679
+v1_e11_anti,PCGS_fresh,3,0.0901124,0.25344,0.16679
+v1_e11_ferro,RAND_fresh,3,0.141038,0.649708,0.34947
+v1_e11_ferro,PCGS_fresh,4,0.234476,0.427932,0.34947
+v1_e11_uniform,RAND_fresh,3,0.184798,0.681184,0.387649
+v1_e11_uniform,PCGS_fresh,3,0.247005,0.524334,0.387649

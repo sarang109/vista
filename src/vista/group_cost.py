@@ -149,3 +149,12 @@ def random_instance(rng, m_clauses: int, n_groups: int, density: float = 0.5,
 
 def harmonic(m: int) -> float:
     return sum(1.0 / i for i in range(1, m + 1))
+
+
+def layout_cost(prof, names, layout: dict, F: dict, per_claim: float) -> float:
+    """Fixed-charge proof cost of disclosing a profile under a sender's credential layout:
+    F_g for every credential group touched plus per_claim for every disclosed claim (N5 cost folded
+    into the disclosure governor). names[i] is the attribute name of coordinate i; layout maps a name to
+    its credential group."""
+    groups = {layout[names[i]] for i, t in enumerate(prof) if t > 0}
+    return float(sum(F.get(g, 1.0) for g in groups) + per_claim * sum(1 for t in prof if t > 0))

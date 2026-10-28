@@ -1,0 +1,6 @@
+family,instances,feasible,obstruction_found,solver_agrees,positive_Lambda_DET,mean_Lambda_DET_bits,mean_Lambda_floor_bits,mean_floor_over_DET,max_zero_kernel_Lambda_bits
+policy_library,11,0,11,11,11,0.215949,0.0577244,0.267305,0
+sparse_support,103,39,61,103,68,0.162338,0.0313023,0.192822,1.60171e-16
+v1_e11_anti,117,0,117,117,117,0.165959,0.0470506,0.283507,0
+v1_e11_ferro,116,0,116,116,116,0.371062,0.0854627,0.230319,0
+v1_e11_uniform,114,0,114,114,114,0.38022,0.108689,0.285858,0

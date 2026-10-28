@@ -58,7 +58,44 @@
       8
     ],
     "e10_payments": 6000,
-    "progress_interval_s": 60
+    "progress_interval_s": 60,
+    "e23_sparse": 103,
+    "e24_skewed": 80,
+    "e24_lp_instances": 60,
+    "e24_mismatch_every": 4,
+    "e25_toy": 40,
+    "e25_payer_fraction": 1.0,
+    "e26_policies": 100,
+    "e26_lp_instances": 30,
+    "e27_payer_fraction": 0.2,
+    "e28_payments": 6000,
+    "e28_trials": 4000,
+    "governor": {
+      "overhead": 0.0235,
+      "lam": 1.0,
+      "ledger_rho": {
+        "credential_age": 2,
+        "account_age": 2
+      },
+      "fixed_charge": {
+        "weight": 0.5,
+        "F": {},
+        "per_claim": 0.25
+      },
+      "probe_limit": 10
+    },
+    "grace": {
+      "eps": 0.0001,
+      "revocations_per_key_year": 1.0,
+      "stress_eps": 0.05,
+      "stress_tau_s": 900
+    },
+    "rba": {
+      "zip": "data/rba/rba-dataset.zip",
+      "cache": "data/rba_cache",
+      "user_fraction": 0.06,
+      "warmup_days": 60
+    }
   },
   "versions": {
     "python": "3.14.7",
@@ -70,11 +107,11 @@
     "cpus": 8,
     "gmpy2": "2.3.1"
   },
-  "started": "2026-10-01T12:04:49",
+  "started": "2026-10-28T11:10:26",
   "steps": [
     {
       "step": "data",
-      "seconds": 0.27,
+      "seconds": 0.25,
       "status": "ok",
       "files": [
         "results/paysim/paysim_verification.json"
@@ -82,7 +119,7 @@
     },
     {
       "step": "verification",
-      "seconds": 9.51,
+      "seconds": 17.2,
       "status": "ok",
       "files": [
         "results/paysim/verification_appendix.csv"
@@ -90,7 +127,7 @@
     },
     {
       "step": "e1",
-      "seconds": 6.52,
+      "seconds": 6.55,
       "status": "ok",
       "files": [
         "results/paysim/e1_mdps_optimality.csv",
@@ -99,7 +136,7 @@
     },
     {
       "step": "e2",
-      "seconds": 2.23,
+      "seconds": 2.04,
       "status": "ok",
       "files": [
         "results/paysim/e2_mdps_latency.csv"
@@ -107,7 +144,7 @@
     },
     {
       "step": "e4",
-      "seconds": 0.72,
+      "seconds": 0.71,
       "status": "ok",
       "files": [
         "results/paysim/e4_deterministic_man.csv"
@@ -115,7 +152,7 @@
     },
     {
       "step": "e5",
-      "seconds": 11.25,
+      "seconds": 10.78,
       "status": "ok",
       "files": [
         "results/paysim/e5_attack_resistance.csv"
@@ -123,7 +160,7 @@
     },
     {
       "step": "e6",
-      "seconds": 6.69,
+      "seconds": 6.65,
       "status": "ok",
       "files": [
         "results/paysim/e6_crypto_backends.csv"
@@ -147,7 +184,7 @@
     },
     {
       "step": "e13",
-      "seconds": 5.59,
+      "seconds": 5.56,
       "status": "ok",
       "files": [
         "results/paysim/e13_bop_cost.csv"
@@ -163,7 +200,7 @@
     },
     {
       "step": "e15",
-      "seconds": 4.07,
+      "seconds": 3.96,
       "status": "ok",
       "files": [
         "results/paysim/e15_ledger_utility.csv"
@@ -171,7 +208,7 @@
     },
     {
       "step": "e16",
-      "seconds": 1.0,
+      "seconds": 0.98,
       "status": "ok",
       "files": [
         "results/paysim/e16_cumulative_leakage.csv"
@@ -187,7 +224,7 @@
     },
     {
       "step": "e18",
-      "seconds": 5.05,
+      "seconds": 5.07,
       "status": "ok",
       "files": [
         "results/paysim/e18_fixed_charge_greedy.csv"
@@ -195,7 +232,7 @@
     },
     {
       "step": "e19",
-      "seconds": 33.1,
+      "seconds": 32.77,
       "status": "ok",
       "files": [
         "results/paysim/e19_stochastic_man.csv"
@@ -219,15 +256,50 @@
     },
     {
       "step": "e22",
-      "seconds": 0.11,
+      "seconds": 0.1,
       "status": "ok",
       "files": [
         "results/paysim/e22_commitment_overhead.csv"
       ]
     },
     {
+      "step": "e23",
+      "seconds": 5.27,
+      "status": "ok",
+      "files": [
+        "results/paysim/e23_zero_leakage.csv",
+        "results/paysim/e23_summary.csv"
+      ]
+    },
+    {
+      "step": "e24",
+      "seconds": 41.37,
+      "status": "ok",
+      "files": [
+        "results/paysim/e24_kernel_comparison.csv",
+        "results/paysim/e24_summary.csv",
+        "results/paysim/e24_prior_mismatch.csv",
+        "results/paysim/e24_frontier_curve.csv",
+        "results/paysim/e24_gate.csv"
+      ]
+    },
+    {
+      "step": "e26",
+      "seconds": 23.82,
+      "status": "ok",
+      "files": [
+        "results/paysim/e26_chain_marginals.csv",
+        "results/paysim/e26_association.csv",
+        "results/paysim/e26_zero_leakage.csv",
+        "results/paysim/e26_kernel_comparison.csv",
+        "results/paysim/e26_summary.csv",
+        "results/paysim/e26_gate.csv",
+        "results/paysim/e26_data.csv"
+      ]
+    },
+    {
       "step": "e2e",
-      "seconds": 1243.17,
+      "seconds": 1403.32,
       "status": "ok",
       "files": [
         "results/paysim/banks.csv",
@@ -251,6 +323,34 @@
       "files": [
         "results/paysim/e10_failure_injection.csv"
       ]
+    },
+    {
+      "step": "e25",
+      "seconds": 88.92,
+      "status": "ok",
+      "files": [
+        "results/paysim/e25_theory.csv",
+        "results/paysim/e25_crossover.csv",
+        "results/paysim/e25_coverage_bound.csv",
+        "results/paysim/e25_workload.csv"
+      ]
+    },
+    {
+      "step": "e27",
+      "seconds": 2144.75,
+      "status": "ok",
+      "files": [
+        "results/paysim/e27_governor_ablation.csv"
+      ]
+    },
+    {
+      "step": "e28",
+      "seconds": 5.76,
+      "status": "ok",
+      "files": [
+        "results/paysim/e28_grace_timeline.csv",
+        "results/paysim/e28_grace_exposure.csv"
+      ]
     }
   ],
   "figures": [
@@ -264,39 +364,66 @@
     "paper_artifacts/figures/paysim/e19_man.png",
     "paper_artifacts/figures/paysim/e13_bop.png",
     "paper_artifacts/figures/paysim/e7_throughput.png",
-    "paper_artifacts/figures/paysim/e10_failures.png"
+    "paper_artifacts/figures/paysim/e10_failures.png",
+    "paper_artifacts/figures/paysim/e24_frontier.png",
+    "paper_artifacts/figures/paysim/e25_repeated.png",
+    "paper_artifacts/figures/paysim/e25_workload_attack.png",
+    "paper_artifacts/figures/paysim/e26_fkg.png",
+    "paper_artifacts/figures/paysim/e27_governor.png",
+    "paper_artifacts/figures/paysim/e28_grace.png"
   ],
-  "finished": "2026-10-01T12:27:04",
+  "finished": "2026-10-28T12:16:47",
   "sha256": {
     "banks.csv": "b40183ba116532be93e293a076ad96cc91d1db5b6ba797126b4ac82c867692ee",
     "e10_failure_injection.csv": "cf7c8c38e5e8230bcb1060292a1ffbffab24940709cb1c995adeccb4307d460f",
     "e11_selection_leakage.csv": "99c11279aed0d2db845ceea89039884e8b99ca767f44b76d4b7a20f9053f7398",
     "e12_leakage_cost_pareto.csv": "cf334e51c022a86fb5e89b944f80efed2d352347eb6970f09aec8fb2aea62d44",
-    "e13_bop_cost.csv": "899b97f44450a9575731918113e2d0054dad2d02a3c83ce97cf3828da7c0f582",
+    "e13_bop_cost.csv": "c9f115ef751a7364ec0e47f96d36d2516381b3e61dc8e09da74a9f72518da30d",
     "e14_probing_attack.csv": "33759b0fd9b6a827eb7b9637bfa7e4dd117e0ac77146fdd62245fc1f51931d2a",
     "e15_ledger_utility.csv": "3e23b98faf726bc919acbd55a6a97baa86f05a30a014b444e697b59b8295a0de",
     "e16_cumulative_leakage.csv": "1b6a69290764ddab086afa8c0e330675ba47e21954ddeea51917a0efcace40cb",
     "e17_additivity_gap.csv": "3ecf44b7110d8719a170775469913c564db5084c4f636f8c252b53c4b1c92302",
-    "e18_fixed_charge_greedy.csv": "5f7dc0b4366530524461342d235c509d76c72cb40680ef0e4f845b1b0aa33a4d",
+    "e18_fixed_charge_greedy.csv": "ad53d88c1df23f76e10fbbd28e8ae9c04bbc0f61a2b81bdcb64e2af51c061b75",
     "e19_stochastic_man.csv": "dead02738d122caaa4a3c7341d92e129c20a9031628fb2bbe1430c0dc43727ff",
-    "e1_mdps_optimality.csv": "535c98248aaf92935f70192edf7545a236d0439bf8a06b9be64fee46a4286ff0",
-    "e1_mdps_summary.csv": "a339e60bdd3d27646755f07d7b1ea7dff9b3027b6e091b0b81b8e6ec58e25939",
+    "e1_mdps_optimality.csv": "e9db69cade543cc14473eca0827ebb2a337b1d64e592946c2bfe992a8c5a9bde",
+    "e1_mdps_summary.csv": "369ba9fe55e91afe34c4b910d8c793193db50750ea466baa684f0f42ad7036f2",
     "e20_policy_extraction.csv": "43ce768ef0232f7c9460b0ad8a21e730dfef48e7e41b349fc62fc12ba8db3afc",
     "e21_rational_liar.csv": "c3c28abd5a6ed46d951db1f88212fa3407461555e368181fc70eafbc2e18f1d8",
-    "e22_commitment_overhead.csv": "1a94a4cefce5e17ab0a68a4869eac1fc6ed8d446875504b41cd834f11d86cc8c",
-    "e2_mdps_latency.csv": "b4ee04a449e4c27a1e1ecd2fe082a9bab6cd29b28c7246e0e04eb2777a064d9a",
-    "e3_disclosure_modes.csv": "6fc360eb45da6fb48b3fa9279ca1137f79f1bd0219f7c6bc0a371a4a91241f2f",
+    "e22_commitment_overhead.csv": "89b6973d123f889f0077d920ee14d1cfe7c81e710800a328fab27b14bc07d97e",
+    "e23_summary.csv": "532204d446a112ad7aec42a1cee03f5ecb3e820bb7e6323881dc3e8b9344b42c",
+    "e23_zero_leakage.csv": "d332c413e10791d183b27e520dd73544fa1e6b1b816fb6e7b6f43a3fdf9a8617",
+    "e24_frontier_curve.csv": "bc97681a48f1d0440da4ff7f3fa512b4f89d20c2c8c34a202fa0a91558ccc16f",
+    "e24_gate.csv": "e363344728f304eaa69bb95681e218cabef9752ce8c978c0e927a66cf410e0c8",
+    "e24_kernel_comparison.csv": "2be83708f73e2e9125a0b97b94072fe048357ec4964e6b46912d33ac61e09610",
+    "e24_prior_mismatch.csv": "dc39de580d89c48130059dc8321c02434dd98c02cb5eb33859c39d5be7d5d5c3",
+    "e24_summary.csv": "4892054d4a5f515d2cfa535f42e09603733f3f896f980ee046919d51d35d588a",
+    "e25_coverage_bound.csv": "d6679900196d42f049a0db93251973fbfe72d4f759395163db1a12d7db159b57",
+    "e25_crossover.csv": "586a44193090545596a30adaf6194a41c22c2805ad384bc0656e0ddcf4e0de89",
+    "e25_theory.csv": "5513da697e4d50df31764879c7b7280caac5d980e06ae147768a8236a02445d3",
+    "e25_workload.csv": "dee2dd34d1238ed4035de09a5172cec8a1069d1ee6d74e6a83d0f1f39cf1e421",
+    "e26_association.csv": "0c2d53c44860bd2a3e09f743d4e61b09d8eb013eb0839bb2f3ca65f56894b02e",
+    "e26_chain_marginals.csv": "e8ecf2132c99fca6afb306c7727b129548216be42cfc451fa17452728bcea860",
+    "e26_data.csv": "341fd86af749612c5d3f5e34f4668d792bdb227815ce192b47f90ddfe2ca6f1a",
+    "e26_gate.csv": "89fb078853155fee50790a65bb6a7d001dbc94b598f1fe115c0da926ec502d37",
+    "e26_kernel_comparison.csv": "a2b860d892121be87f8120998470f43a75ea41bd4a539dd05fbb9c46134f0a8c",
+    "e26_summary.csv": "b31b303279796f3f91145d0b18edc759ee1050752457c836fb3fe09d67b15aa2",
+    "e26_zero_leakage.csv": "63369c387b267a6f49a8edc58fa6c84eb0f46c97917c8bb1b96b9ab89edd5663",
+    "e27_governor_ablation.csv": "e167dfda15f1997703c40dac65c68d966f0cf5465333213becc4cf1f023410c8",
+    "e28_grace_exposure.csv": "3c81162f67fb3007b7fddbccb33b23c5ce0648ac3a2067d128ba6c74655069d8",
+    "e28_grace_timeline.csv": "ce8b4a0d7ac26dc4a9c109575925063915a7e0d0c3b696a089d3d2216d249900",
+    "e2_mdps_latency.csv": "ed4b759695e3385c5612fe494574eb00b594aa0fcd3622409c76cb6282e7888e",
+    "e3_disclosure_modes.csv": "81a0d85c432f331f78b4e61d2fc2740a9a0ec0a509df286ce3c830b53224238d",
     "e4_deterministic_man.csv": "86fc08539bc096151bcd820caf863e9d6410c7e0cb268844f3e2caea6d42b0cc",
     "e5_attack_resistance.csv": "6c2edf3050fb7c285826e47c1f8b24c899a7f3e209a92d5e08af511f39280da3",
-    "e6_crypto_backends.csv": "a5b02f79f6973c90b6c224be09c463ca7225f878abbe35a3cd5b0a110a0f6b9f",
-    "e7_latency.csv": "60c864da238d2aa096314d803061ddc994f3c44429910ab4c86e70d12471799a",
-    "e7_throughput_scaling.csv": "0f4bb6178b92be888f5bcc94a319ea8edcaf347ebca088c1eed9f4f0ff172d45",
+    "e6_crypto_backends.csv": "ad068ada27b3692fa467a21833710aec338251ba0004a604223cfdcc318b7f34",
+    "e7_latency.csv": "f51b009124d4fc6dd49772a9a88b5d861b05290c13b1f40af13607fb7924c421",
+    "e7_throughput_scaling.csv": "07f44ae9210fc4ea28e7c749ebc889933c529cc087fea10257b9a44e02202e43",
     "e8_decisions_by_heterogeneity.csv": "1222448966f381aff2a164cf7815b87bd9dd638cdc10ff1499a627968ef8768d",
     "e8_decisions_by_scenario.csv": "780d5d20b6ba0070c34dbf6e8e7f4665b326c4bdf7f52f0c8a096a1ad157b596",
     "e8_decisions_by_tier.csv": "1378e030c14a246c6368fc2b2bcdca8f8de35cce2e261640cc4853eb101f7064",
     "h1_decision_fidelity.csv": "c9ce71eccad746d60016f211adbfe2b6b71d33513d4aa609ca690667725eff2a",
     "h2_leakage_by_strategy.csv": "4e26b3d0b69ccbe82cec99ef641822ec3f6d826fdd301f826cbf64de8c784a82",
     "h3_man_vs_blanket.csv": "f9072ee31654f47778b4ca1be23785ceac354aab1b2e2b9dc7a80b429821d4de",
-    "verification_appendix.csv": "81317689552fad358aec50cf4d73e9ec154a02e5dcd04e336e6eef172c22463f"
+    "verification_appendix.csv": "5b9d13236e09227b452bf3c7a61613a30ede8a70ca5261c1fe8ebbc3610086b6"
   }
 }

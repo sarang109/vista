@@ -84,7 +84,7 @@ code { font: 12px var(--mono); }
 
   <section>
     <h2>Hypotheses</h2>
-    <p>Each verdict is computed from the result CSVs by <code>scripts/build_dashboard.py</code>. A verdict is supported when the measured effect goes in the hypothesised direction on this workload. The workload is synthetic, so none of this is a real-world prevalence claim.</p>
+    <p>Each verdict is computed from the result CSVs by <code>python -m vista.dashboard</code>. A verdict is supported when the measured effect goes in the hypothesised direction on this workload. Security evidence is synthetic except for the login-signal priors of E26, so none of this is a real-world prevalence claim.</p>
     <div class="hyp" id="hyp"></div>
   </section>
 
@@ -109,6 +109,28 @@ code { font: 12px var(--mono); }
       <div class="card"><h3>Branch-oblivious proof cost (E13)</h3><div class="legend" id="lg-e13"></div><div id="c-e13"></div>
         <div class="note">Generate + verify, median. CDS OR-proofs over a 2048-bit group; cost grows linearly with the number of branches.</div></div>
     </div>
+  </section>
+
+  <section id="rev" hidden>
+    <h2>Selection-leakage theory and the disclosure governor (E23–E28)</h2>
+    <div class="grid2">
+      <div class="card"><h3>Leakage–cost frontier, skewed prior (E24)</h3><div class="legend" id="lg-e24"></div><div id="c-e24"></div>
+        <div class="note">PCGS is the exact minimum of Λ at each expected cost (Theorem 2). RAND is the exponential mechanism, LP the cost-optimal ε-private kernel. No kernel goes below the floor, and the floor is above zero for every policy with two or more incomparable branches under a full-support prior (Theorem 1).</div></div>
+      <div class="card"><h3>Selection leakage over repeated payments (E25)</h3><div class="legend" id="lg-e25"></div><div id="c-e25"></div>
+        <div class="note">Exact Λₙ with unchanged evidence on 64-state toy spaces (three- and four-branch policies). Fresh draws let the receiver collect the supported-branch set; sticky selection reveals no more than the first payment (Theorem 3).</div></div>
+      <div class="card"><h3>Branch-inference attacker on the payment workload (E25)</h3><div class="legend" id="lg-e25w"></div><div id="c-e25w"></div>
+        <div class="note">Accuracy above the prior-only baseline of an attacker trained on half of the payers and tested on the other half, by position in the (payer, receiver, policy) sequence. Evidence drifts between payments as in the workload.</div></div>
+      <div class="card"><h3>Stale-status grace during a registry outage (E28)</h3><div class="legend" id="lg-e28"></div><div id="c-e28"></div>
+        <div class="note">Micro and standard tiers may use a status snapshot up to τ = −ln(1−ε)/λᵣ old; high-value tiers stay fail-closed.</div></div>
+    </div>
+    <div class="card"><h3>Go / no-go gates</h3><div class="tbl" id="t-gates"></div></div>
+    <div class="card"><h3>Is zero selection leakage ever possible? (E23, Theorem 1)</h3><div class="tbl" id="t-e23"></div></div>
+    <div class="card"><h3>PCGS vs randomised selection at equal cost, 2.35% overhead (E24, E26)</h3><div class="tbl" id="t-e24"></div></div>
+    <div class="card"><h3>Positive association on login signals (E26)</h3><div class="tbl" id="t-e26"></div>
+      <div class="note">TP2: adjacent 2×2 log odds ratios (the pairwise FKG lattice condition). PQD: P(Xᵢ≥a, Xⱼ≥b) ≥ P(Xᵢ≥a)P(Xⱼ≥b). A violation counts when it is below zero by more than 3 standard errors.</div></div>
+    <div class="card"><h3>Integrated disclosure governor, one component at a time (E27)</h3><div class="tbl" id="t-e27"></div>
+      <div class="note">Exposure-weighted Λ charges each payment the Λₙ of its position in its (payer, receiver, policy) sequence under the unchanged-evidence model. Ledger false rejects are satisfiable payments the interval ledger refused.</div></div>
+    <div class="card"><h3>Exposure under stale-status grace (E28)</h3><div class="tbl" id="t-e28"></div></div>
   </section>
 
   <section>
@@ -300,6 +322,67 @@ table("t-h3", [{h: "strategy", f: r => r.strategy}, {h: "payments", num: 1, f: r
   {h: "user seconds", num: 1, f: r => fmt(n(r.mean_user_seconds), 1)}, {h: "95% CI (friction diff)", f: r => r.friction_ci95 || ""}], D.h3);
 table("t-ver", [{h: "#", f: r => r.id}, {h: "check", wrap: 1, f: r => r.check}, {h: "supports", f: r => r.supports},
   {h: "passed", num: 1, f: r => `${(+r.passed).toLocaleString()} / ${(+r.instances).toLocaleString()}`}, {h: "result", wrap: 1, f: r => r.result}, {h: "tag", f: r => r.tag}], D.ver);
+
+// ---------------------------------------------------------------- revision (E23-E28)
+if (D.e24f && D.e24f.length) {
+  $("rev").hidden = false;
+  const fr = D.e24f.filter(r => r.prior === "skewed");
+  legend("lg-e24", ["PCGS (optimal)", "RAND (exponential)", "LP ε-private", "DET"]);
+  lines("c-e24", [
+    {name: "PCGS", r: 2, pts: fr.filter(r => r.mode === "PCGS").map(r => [100 * n(r.cost_overhead), n(r.Lambda_bits)])},
+    {name: "RAND", r: 2, pts: fr.filter(r => r.mode === "RAND").map(r => [100 * n(r.cost_overhead), n(r.Lambda_bits)])},
+    {name: "LP", dotsOnly: true, r: 5, pts: fr.filter(r => r.mode === "LP").map(r => [100 * n(r.cost_overhead), n(r.Lambda_bits)])},
+    {name: "DET", dotsOnly: true, r: 5, pts: fr.filter(r => r.mode === "DET").map(r => [0, n(r.Lambda_bits)])}],
+    {xlabel: "cost overhead vs DET (%)", ylabel: "selection leakage Λ (bits)", xmin: 0,
+     xmax: Math.max(...fr.filter(r => r.mode === "FLOOR" || r.mode === "LP").map(r => 100 * n(r.cost_overhead))) * 1.05});
+}
+if (D.e25t && D.e25t.length) {
+  const fam = D.e25t.some(r => r.family === "toy_64_state") ? "toy_64_state" : D.e25t[0].family;
+  const st = ["RAND_fresh", "PCGS_fresh", "PCGS_SBS", "DET"];
+  legend("lg-e25", ["RAND, fresh draws", "PCGS, fresh draws", "PCGS + sticky (SBS)", "DET"]);
+  lines("c-e25", st.map(s => ({name: s, r: 2.5, pts: D.e25t.filter(r => r.family === fam && r.strategy === s).map(r => [n(r.n), n(r.mean_Lambda_bits)])})),
+    {xlabel: "payments to the same receiver", ylabel: "Λₙ (bits)", xmin: 1, xticks: [1, 2, 4, 6, 8, 10]});
+}
+if (D.e25w && D.e25w.length) {
+  const st = ["RAND_fresh", "PCGS_fresh", "PCGS_SBS", "DET"];
+  legend("lg-e25w", st);
+  const w5 = D.e25w.filter(r => ["1", "2", "3", "4", "5"].includes(r.n));
+  lines("c-e25w", st.map(s => ({name: s, pts: w5.filter(r => r.strategy === s).map(r => [n(r.n), 100 * n(r.attacker_lift)])})),
+    {xlabel: "position in sequence", ylabel: "accuracy above baseline (pp)", xmin: 1, xticks: [1, 2, 3, 4, 5]});
+}
+if (D.e28t && D.e28t.length) {
+  const cf = [...new Set(D.e28t.map(r => r.config))].sort().reverse();
+  legend("lg-e28", cf.map(c => c.replace(/_/g, " ")));
+  const ob = D.e28t.filter(r => r.phase === "registry_outage").map(r => +r.minute);
+  lines("c-e28", cf.map(c => ({name: c, r: 2, pts: D.e28t.filter(r => r.config === c).map(r => [+r.minute, 100 * n(r.availability_low_tiers)])})),
+    {xlabel: "minute", ylabel: "low tiers accepted | satisfiable (%)", ymax: 100, xmin: 0,
+     bands: ob.length ? [[Math.min(...ob), Math.max(...ob) + 1, "outage"]] : []});
+}
+if (D.gates && D.gates.length) table("t-gates", [{h: "gate", f: r => r.gate}, {h: "passed", f: r => r.passed === "True" ? "yes" : "no"},
+  {h: "measured", wrap: 1, f: r => r.measured}, {h: "consequence", wrap: 1, f: r => r.consequence}], D.gates);
+if (D.e23 && D.e23.length) table("t-e23", [{h: "family", f: r => r.family}, {h: "instances", num: 1, f: r => r.instances},
+  {h: "Λ = 0 feasible", num: 1, f: r => r.feasible}, {h: "solver agrees", num: 1, f: r => r.solver_agrees},
+  {h: "Λ DET (bits)", num: 1, f: r => fmt(n(r.mean_Lambda_DET_bits), 3)}, {h: "Λ floor (bits)", num: 1, f: r => fmt(n(r.mean_Lambda_floor_bits), 3)},
+  {h: "floor / DET", num: 1, f: r => fmt(n(r.mean_floor_over_DET), 2)}], D.e23);
+if (D.e24s && D.e24s.length) table("t-e24", [{h: "family", f: r => r.family}, {h: "instances", num: 1, f: r => r.instances},
+  {h: "Λ DET", num: 1, f: r => fmt(n(r.mean_Lambda_DET_bits), 3)}, {h: "Λ RAND", num: 1, f: r => fmt(n(r.mean_Lambda_RAND_bits), 3)},
+  {h: "Λ PCGS", num: 1, f: r => fmt(n(r.mean_Lambda_PCGS_bits), 3)}, {h: "reduction", num: 1, f: r => pct(n(r.mean_reduction))},
+  {h: "reduction, m ≥ 3", num: 1, f: r => isFinite(n(r.mean_reduction_m_ge_3)) ? pct(n(r.mean_reduction_m_ge_3)) : "–"},
+  {h: "≥10% lower", num: 1, f: r => pct(n(r.share_reduction_ge_10pct))}, {h: "never worse", f: r => r.never_worse === "True" ? "yes" : "no"}],
+  D.e24s.filter(r => +r.overhead === 0.0235));
+if (D.e26a && D.e26a.length) table("t-e26", [{h: "pair", f: r => `${r.chain_i} ~ ${r.chain_j}`}, {h: "logins", num: 1, f: r => (+r.n).toLocaleString()},
+  {h: "Spearman", num: 1, f: r => fmt(n(r.spearman), 3)}, {h: "TP2 violations", num: 1, f: r => `${r.tp2_significant_violations} / ${r.tp2_minors}`},
+  {h: "min log OR", num: 1, f: r => fmt(n(r.min_log_odds_ratio), 2)}, {h: "PQD violations", num: 1, f: r => r.pqd_significant_violations}], D.e26a);
+if (D.e27 && D.e27.length) table("t-e27", [{h: "configuration", f: r => r.config}, {h: "payments", num: 1, f: r => (+r.payments).toLocaleString()},
+  {h: "accept", num: 1, f: r => pct(n(r.accept_rate_initial))}, {h: "ledger false reject", num: 1, f: r => pct(n(r.ledger_false_reject_rate))},
+  {h: "Λ₁ (bits)", num: 1, f: r => fmt(n(r.mean_Lambda1_bits), 3)}, {h: "exposure Λ (bits)", num: 1, f: r => fmt(n(r.mean_exposure_weighted_Lambda_bits), 3)},
+  {h: "claims surprisal", num: 1, f: r => fmt(n(r.mean_disclosed_surprisal_bits), 2)},
+  {h: "governor p99 ms", num: 1, f: r => fmt(n(r.governor_p99_ms), 3)}, {h: "e2e p99 ms", num: 1, f: r => fmt(n(r.e2e_p99_ms), 2)},
+  {h: "Δ p99 vs DET", num: 1, f: r => fmt(n(r.e2e_p99_delta_ms_vs_DET), 2)}, {h: "tps", num: 1, f: r => fmt(n(r.throughput_tps), 0)}], D.e27);
+if (D.e28e && D.e28e.length) table("t-e28", [{h: "setting", f: r => r.setting}, {h: "τ (s)", num: 1, f: r => fmt(n(r.tau_s), 0)},
+  {h: "grace accepts", num: 1, f: r => r.grace_accepts}, {h: "expected unsafe", num: 1, f: r => fmt(n(r.expected_unsafe_accepts), 4)},
+  {h: "bound ε·N", num: 1, f: r => fmt(n(r.bound_unsafe_accepts), 4)}, {h: "Monte Carlo unsafe", num: 1, f: r => fmt(n(r.mc_mean_unsafe_accepts), 4)},
+  {h: "bound holds", f: r => r.bound_holds === "True" ? "yes" : "no"}], D.e28e);
 $("foot").innerHTML = `<div>Run started ${D.manifest.started}, finished ${D.manifest.finished}. Python ${v.python}, numpy ${v.numpy}, scipy ${v.scipy}, cryptography ${v.cryptography}, gmpy2 ${v.gmpy2}; ${v.machine}, ${v.cpus} CPUs.</div>
 <div>Regenerate with <code>python -m vista.run_all --config configs/experiments/paysim.json</code> (builds this page automatically). Latency percentiles come from 0.8%-resolution histograms; means and rates are exact. This file is self-contained and works offline.</div>`;
 </script>

@@ -120,7 +120,60 @@ def verdicts(D):
         add("H12", "Commit-before-settle reduces the audit rate needed for deterrence",
             "supported" if f(c["mean_q_star"]) < f(n["mean_q_star"]) else "not supported",
             f"mean deterrence audit rate q* {100 * f(c['mean_q_star']):.1f}% with commitment vs {100 * f(n['mean_q_star']):.1f}% without")
+    revision_verdicts(D, add)
     return out
+
+
+def revision_verdicts(D, add):
+    v1 = [r for r in D.get("e23", []) if r["family"].startswith("v1_") or r["family"] == "policy_library"]
+    if v1:
+        inst = sum(int(r["instances"]) for r in v1)
+        feas = sum(int(r["feasible"]) for r in v1)
+        agree = sum(int(r["solver_agrees"]) for r in D["e23"])
+        tot = sum(int(r["instances"]) for r in D["e23"])
+        sp = [r for r in D["e23"] if r["family"] == "sparse_support"]
+        add("H13", "No free selection: every branch-revealing selection rule leaks (Theorem 1)",
+            "supported" if feas == 0 and agree == tot else "mixed",
+            f"zero leakage feasible in {feas} of {inst} full-support instances; the exact-cover test matches the convex "
+            f"solver in {agree}/{tot} cases" + (f" ({sp[0]['feasible']} of {sp[0]['instances']} sparse-support priors allow it)" if sp else ""))
+    s24 = [r for r in D.get("e24s", []) if r["family"].startswith("skewed") and f(r["overhead"]) == 0.0235]
+    if s24:
+        never = all(r["never_worse"] == "True" for r in D["e24s"])
+        red = sum(f(r["mean_reduction"]) for r in s24) / len(s24)
+        g = D["e24g"][0] if D.get("e24g") else {}
+        add("H14", "PCGS attains the minimum selection leakage at every cost (Theorem 2)", "supported" if never else "not supported",
+            f"never worse than RAND at equal cost: {never}; mean reduction {100 * red:.1f}% on skewed priors at 2.35% overhead; "
+            f"gate 1 {'passed' if g.get('passed') == 'True' else 'not passed'}")
+    cr = [r for r in D.get("e25c", []) if r["strategy"] == "RAND_fresh"]
+    if cr:
+        sbs = [r for r in D["e25t"] if r["strategy"] == "PCGS_SBS"]
+        flat = all(abs(f(r["mean_Lambda_bits"]) - f([x for x in sbs if x["family"] == r["family"] and x["n"] == "1"][0]["mean_Lambda_bits"])) < 1e-9 for r in sbs)
+        passes = [r for r in cr if str(r["passes_DET_at_n"]).isdigit()]
+        add("H15", "Fresh randomisation leaks cumulatively; sticky selection holds the single-payment level (Theorem 3)",
+            "supported" if passes and flat else "mixed",
+            "fresh RAND passes DET after " + ", ".join(f"{r['passes_DET_at_n']} payments ({r['family']})" for r in cr) +
+            f"; sticky Lambda constant in n: {flat}")
+    e26 = [r for r in D.get("e26s", []) if r["family"] == "rba_empirical" and f(r["overhead"]) == 0.0235]
+    if e26:
+        r = e26[0]
+        g = D["e26g"][0] if D.get("e26g") else {}
+        add("H16", "The leakage results hold under priors estimated from login signals", "supported" if r["zero_leakage_feasible"] == "0" else "mixed",
+            f"{r['policies']} policies: zero leakage feasible in {r['zero_leakage_feasible']}; PCGS {100 * f(r['mean_reduction']):.1f}% below RAND "
+            f"at 2.35% overhead; FKG (TP2) violated on {g.get('fkg_failing_pairs', '?')} of 6 chain pairs")
+    if D.get("e27"):
+        last = D["e27"][-1]
+        d = f(last["e2e_p99_delta_ms_vs_DET"])
+        add("H17", "The integrated disclosure governor adds little latency", "supported" if d < 5 else "mixed",
+            f"full governor p99 {f(last['e2e_p99_ms']):.1f} ms ({d:+.2f} ms vs DET); governor step p99 {f(last['governor_p99_ms']):.3f} ms; "
+            f"exposure-weighted Lambda {f(last['mean_exposure_weighted_Lambda_bits']):.3f} vs {f(D['e27'][0]['mean_exposure_weighted_Lambda_bits']):.3f} bits (DET)")
+    if D.get("e28e"):
+        ok = all(r.get("bound_holds") == "True" for r in D["e28e"])
+        out = [r for r in D["e28t"] if r["phase"] == "registry_outage"]
+        av = {c: sum(f(r["availability_low_tiers"]) for r in out if r["config"] == c) / max(1, sum(1 for r in out if r["config"] == c))
+              for c in {r["config"] for r in out}}
+        add("H18", "Stale-status grace keeps low-value tiers available with a provable exposure cap", "supported" if ok else "not supported",
+            "low-tier availability during the outage " + ", ".join(f"{100 * v:.0f}% ({k.split('_tau')[0]})" for k, v in sorted(av.items())) +
+            f"; unsafe accepts within the eps bound: {ok}")
 
 
 def build(run: str) -> list[str]:
@@ -134,7 +187,10 @@ def build(run: str) -> list[str]:
         "e14": "e14_probing_attack.csv", "e15": "e15_ledger_utility.csv", "e16": "e16_cumulative_leakage.csv",
         "e17": "e17_additivity_gap.csv", "e18": "e18_fixed_charge_greedy.csv", "e19": "e19_stochastic_man.csv",
         "e20": "e20_policy_extraction.csv", "e21": "e21_rational_liar.csv", "ver": "verification_appendix.csv",
-        "e1": "e1_mdps_summary.csv", "banks": "banks.csv"}.items()}
+        "e1": "e1_mdps_summary.csv", "banks": "banks.csv", "e23": "e23_summary.csv", "e24s": "e24_summary.csv",
+        "e24f": "e24_frontier_curve.csv", "e24g": "e24_gate.csv", "e25t": "e25_theory.csv", "e25c": "e25_crossover.csv",
+        "e25w": "e25_workload.csv", "e26a": "e26_association.csv", "e26s": "e26_summary.csv", "e26g": "e26_gate.csv",
+        "e27": "e27_governor_ablation.csv", "e28t": "e28_grace_timeline.csv", "e28e": "e28_grace_exposure.csv"}.items()}
     with open(os.path.join(res, "manifest.json")) as fh:
         man = json.load(fh)
     src_p = os.path.join(res, "data_source.json")
@@ -144,6 +200,17 @@ def build(run: str) -> list[str]:
                      "finished": man.get("finished"),
                      "steps": [{"step": s["step"], "seconds": s["seconds"], "status": s["status"]} for s in man["steps"]]}
     D["e11"] = [{k: r[k] for k in ("frontier_size", "Lambda_bits", "PoD_bits", "prior")} for r in D["e11"]]
+    D["gates"] = []
+    for g in D["e24g"]:
+        D["gates"].append({"gate": g["gate"], "passed": g["passed"], "consequence": g["consequence"],
+                           "measured": f"PCGS never worse than RAND: {g['never_worse']}; >=10% lower Lambda in "
+                                       f"{100 * f(g['share_skewed_reduction_ge_10pct']):.0f}% of {g['skewed_instances']} skewed-prior instances (need 25%)"})
+    for g in D["e26g"]:
+        D["gates"].append({"gate": g["gate"], "passed": g["passed"], "consequence": g["consequence"],
+                           "measured": f"mean reduction on empirical priors {100 * f(g['mean_reduction_rba_empirical_2.35pct']):.1f}% "
+                                       f"(need 5%); FKG fails on {g['fkg_failing_pairs']} chain pairs"})
+    D["e26s"] = [r for r in D["e26s"] if f(r["overhead"]) == 0.0235]
+    D["e24s"] = [r for r in D["e24s"] if f(r["overhead"]) == 0.0235] + [dict(r, family=r["family"]) for r in D["e26s"]]
     D["e19"] = []
     tpl = open(os.path.join(os.path.dirname(__file__), "templates", "dashboard.html")).read()
     html = tpl.replace("/*__DATA__*/null", json.dumps(D, separators=(",", ":")))

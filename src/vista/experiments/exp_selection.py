@@ -13,9 +13,9 @@ from ..selection import SelectionSpace, blueprint_toy_space
 from ..util import write_csv
 
 
-def run_e11(cfg, out):
+def e11_instances(cfg):
+    """The random policy instances of E11 (also reused by E23-E25), in a fixed RNG order."""
     rng = np.random.default_rng(cfg.get("seed", 1) + 111)
-    rows = []
     sch = synthetic_schema(4, 4)
     for prior_kind in ("uniform", "ferro", "anti"):
         for m_terms in (2, 3, 4, 5, 6):
@@ -32,13 +32,17 @@ def run_e11(cfg, out):
                     if sp.pA <= 0:
                         continue
                     target = sp.prior.states[:, 1] < 2  # a designated undisclosed sensitive predicate
-                    md = sp.metrics(sp.kernel_det(), target)
-                    rows.append({"prior": prior_kind, "frontier_size": len(fr), "cost_spread": spread, "rep": rep,
-                                 "Lambda_bits": md["Lambda"], "E_L_bits": md["E_L"], "L_min_bits": md["L_min"],
-                                 "PoD_bits": md["PoD"], "eps_sel": md["eps_sel"], "worst_adv": md["worst_adv"],
-                                 "branch_attack_acc": md["branch_attack_acc"],
-                                 "branch_attack_base": md["branch_attack_base"],
-                                 "target_attack_lift": md["target_attack_lift"], "a_max": sp.a_max()})
+                    yield {"prior": prior_kind, "frontier_size": len(fr), "cost_spread": spread, "rep": rep}, sp, target
+
+
+def run_e11(cfg, out):
+    rows = []
+    for meta, sp, target in e11_instances(cfg):
+        md = sp.metrics(sp.kernel_det(), target)
+        rows.append(dict(meta, Lambda_bits=md["Lambda"], E_L_bits=md["E_L"], L_min_bits=md["L_min"],
+                         PoD_bits=md["PoD"], eps_sel=md["eps_sel"], worst_adv=md["worst_adv"],
+                         branch_attack_acc=md["branch_attack_acc"], branch_attack_base=md["branch_attack_base"],
+                         target_attack_lift=md["target_attack_lift"], a_max=sp.a_max()))
     return [write_csv(os.path.join(out, "e11_selection_leakage.csv"), rows)]
 
 

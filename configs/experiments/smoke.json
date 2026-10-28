@@ -51,5 +51,42 @@
     2,
     4
   ],
-  "e10_payments": 2400
+  "e10_payments": 2400,
+  "e23_sparse": 40,
+  "e24_skewed": 20,
+  "e24_lp_instances": 8,
+  "e24_mismatch_every": 8,
+  "e25_toy": 10,
+  "e25_payer_fraction": 1.0,
+  "e26_policies": 30,
+  "e26_lp_instances": 8,
+  "e27_payer_fraction": 1.0,
+  "e28_payments": 2400,
+  "e28_trials": 1000,
+  "governor": {
+    "overhead": 0.0235,
+    "lam": 1.0,
+    "ledger_rho": {
+      "credential_age": 2,
+      "account_age": 2
+    },
+    "fixed_charge": {
+      "weight": 0.5,
+      "F": {},
+      "per_claim": 0.25
+    },
+    "probe_limit": 10
+  },
+  "grace": {
+    "eps": 0.0001,
+    "revocations_per_key_year": 1.0,
+    "stress_eps": 0.05,
+    "stress_tau_s": 900
+  },
+  "rba": {
+    "zip": "data/rba/rba-dataset.zip",
+    "cache": "data/rba_cache",
+    "user_fraction": 0.06,
+    "warmup_days": 60
+  }
 }

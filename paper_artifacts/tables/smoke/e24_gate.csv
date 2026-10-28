@@ -1,0 +1,2 @@
+gate,never_worse,skewed_instances,share_skewed_reduction_ge_10pct,passed,consequence
+1 (after E24),True,40,0.175,False,keep Theorem 2 as an optimality certificate (RAND within x% of optimal); headline C1 and C3

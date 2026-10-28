@@ -4,7 +4,7 @@
 
 This repository is a runnable, end-to-end implementation of the VISTA research blueprint (v1.1, Parts I and II).
 It covers the protocol (VSAC), the algorithms (SEN, MDPS, MAN, and foundations N1–N8), a simulated interbank market
-with a realistic transaction workload, an attack suite, and experiments E1–E22 plus the baselines and ablations.
+with a realistic transaction workload, an attack suite, and experiments E1–E28 plus the baselines and ablations. The selection-leakage theory added in the revision (no free selection, optimal selection, repeated disclosure, the integrated disclosure governor, login-signal priors and stale-status grace) is described in `docs/theory.md`.
 Every experiment writes CSV files, and all figures are regenerated from those CSVs.
 
 Everything runs locally on free, open-source libraries. **No cloud account, API key or paid service is needed.**
@@ -37,7 +37,7 @@ Where the outputs go:
 - `results/<config>/manifest.json`: config, library versions, hardware, per-step timings and SHA-256 hashes of every CSV.
 - `paper_artifacts/figures/<config>/*.png` and `paper_artifacts/tables/<config>/*.csv`: figures and tables for the paper.
 
-Run a single step with `--only e2e,e10` (`data` is the PaySim download and verification step). The step names are `verification, e1, e2, e4, e5, e6, e11–e22, e2e, e10`.
+Run a single step with `--only e2e,e10` (`data` is the PaySim download and verification step). The step names are `verification, e1, e2, e4, e5, e6, e11–e24, e26, e2e, e10, e25, e27, e28`.
 
 ## What is implemented (blueprint section → module)
 
@@ -58,6 +58,11 @@ Run a single step with `--only e2e,e10` (`data` is the PaySim download and verif
 | N4 correlated leakage | `leakage.py` | Surprisal, submodularity/FKG checks, additivity audit, sensitive-target gain |
 | N5 fixed-charge MDPS | `group_cost.py` | Exact ILP/enumeration, myopic greedy, density greedy (DG), adversarial family |
 | N7 policy extraction | `policy_extraction.py` | Counting bounds, conjunction extraction, minterm-shrinking attack with transversals, budgets |
+| Selection-leakage theory (Lemma 1–2, Theorems 1–2) | `pcgs.py` | Signature aggregation, exact zero-leakage test, prior-corrected Gibbs selection (PCGS) by Blahut–Arimoto with a certified duality gap, exact leakage–cost frontier |
+| Repeated disclosure (Theorem 3) | `repeated.py` | Exact Λₙ and Bayes attackers over n payments, coverage bound, sticky branch selection with a keyed PRF |
+| Integrated disclosure governor | `governor.py` | One sender-side path: PCGS table, sticky choice, interval ledger with fallback, fixed-charge cost, extraction budget, audit commitment |
+| Stale-status grace | `trust.py`, `vsac.py` | Per-tier staleness allowance τ = −ln(1−ε)/λᵣ with a bounded expected unsafe-accept rate |
+| Login-signal priors | `simulator/rba.py` | RBA login dataset loader, four derived claim chains, empirical prior, positive-association (FKG) tests |
 | N8 commit-and-audit | `audit.py` | Deterrence law, Merkle commitments, hash-chained transparency log, unpredictable audit sampling |
 | §7 engines | `sender.py`, `receiver.py` | Cached policy compilation; DET/RAND/BOP/ALL/FIXED selection; negotiation-aware partial disclosure for step-up |
 | §10 simulator | `simulator/` | Banks, realistic workload, attacks, deterministic world for parallel workers |
@@ -80,9 +85,31 @@ Run a single step with `--only e2e,e10` (`data` is the PaySim download and verif
 The generated stream is saved as `results/<config>/workload_transactions.csv`. To use a public dataset as the backbone
 instead, see `data/README.md` (PaySim).
 
+## Selection-leakage theory and the disclosure governor (E23–E28)
+
+Statements and proofs are in [`docs/theory.md`](docs/theory.md). Checks 26–35 of `verification_appendix.csv` test
+them numerically.
+
+| Step | Question | Output |
+|---|---|---|
+| `e23` | Is zero selection leakage ever possible? Exact-cover feasibility vs the convex solver on the v1 E11 instances, sparse-support priors and the policy library | `e23_zero_leakage.csv`, `e23_summary.csv` |
+| `e24` | How far is randomised selection from optimal? DET, RAND, LP ε-private and PCGS at 1, 2.35, 5 and 10 % cost overhead; prior-mismatch test; frontier curve; gate 1 | `e24_*.csv` |
+| `e25` | Does fresh randomisation leak over repeated payments? Exact Λₙ and attackers; the workload replayed per (payer, receiver, policy) sequence with an attacker trained and tested on disjoint payers | `e25_*.csv` |
+| `e26` | Do the results hold on login-signal priors? Positive-association tests and E23/E24 repeated on empirical priors; gate 2 | `e26_*.csv` |
+| `e27` | What does the integrated governor cost? DET → RAND → PCGS → +sticky → +ledger → +fixed charge → +budget → +audit on the full protocol path, sharded by sender institution | `e27_governor_ablation.csv` |
+| `e28` | Does stale-status grace cap exposure? The E10 registry outage with grace for low-value tiers; unsafe accepts against the ε bound | `e28_*.csv` |
+
+E26 downloads the RBA login dataset once from Zenodo (record 6782156, 1.1 GB, CC BY 4.0, no account or key
+needed). It verifies the published MD5 and streams a stable 6 % user sample into `data/rba_cache/` in about 90
+seconds. Please cite Wiefling et al., *Pump Up Password Security!*, ACM TOPS 2022 (doi:10.1145/3546069) when you
+use it.
+
 ## Honest limitations
 
-- All security evidence is synthetic, because no public dataset contains interbank authentication evidence.
+- The login-signal prior (E26) is the only evidence derived from observed behaviour. The RBA rows were synthesised
+  by the dataset's authors from a real login log with per-user feature frequencies preserved, but they are logins,
+  not payments, and they cover four claim chains. All other security evidence is synthetic, because no public
+  dataset contains interbank authentication evidence.
   The rates in `archetypes.json` are modelling assumptions. Run sensitivity analyses before generalising.
 - The `ato_like` scenario is constructed with a recent credential reset and a new device. Its high rejection rate
   therefore follows partly from that construction. The `scam_like` scenario is the honest counterpoint: a deceived

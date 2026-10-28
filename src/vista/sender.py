@@ -6,11 +6,14 @@ Selection modes (Sec 21.4 + baselines Sec 9.2):
   BOP   branch-oblivious proof of Phi as a whole (N2, B8)
   ALL   VSAC without MDPS: disclose every available claim (B4)
   FIXED fixed assurance bundle (B3)
+  IDG   integrated disclosure governor (governor.py): PCGS kernel, sticky selection, ledger, fixed charge,
+        policy-extraction budget and audit, each switchable through its GovernorConfig
 """
 from __future__ import annotations
 
 import math
 import secrets
+import time
 from dataclasses import dataclass
 
 import numpy as np
@@ -21,6 +24,7 @@ from . import vsac
 from .audit import MerkleTree, TransparencyLog, evidence_leaves
 from .claims import Schema
 from .crypto.signed import SigningKey
+from .governor import evidence_epoch
 from .policy import Node, frontier, policy_hash
 from .sen import DEFAULT_PROFILE, normalize
 from .util import sha256
@@ -61,7 +65,7 @@ class SenderFI:
     def __init__(self, inst_id: str, schema: Schema, issuer: SigningKey, attestor: SigningKey, cost_fn,
                  profile: dict | None = None, backend: str = "signed", mode: str = "DET", lam: float = 1.0,
                  groups: dict | None = None, log: TransparencyLog | None = None, lifetime_s: int = 120,
-                 fixed_bundle: tuple | None = None, rng=None, cache: bool = True, actions=None):
+                 fixed_bundle: tuple | None = None, rng=None, cache: bool = True, actions=None, governor=None):
         self.id, self.schema = inst_id, schema
         self.issuer, self.attestor = issuer, attestor
         self.profile = profile or DEFAULT_PROFILE
@@ -72,6 +76,8 @@ class SenderFI:
         self.cache = PolicyCache(schema, cost_fn, cache)
         self.cost_fn = cost_fn
         self.actions = actions
+        self.governor = governor
+        self.last_info: dict = {}
 
     def select(self, x, fr, w):
         avail = (fr <= np.asarray(x)).all(1)
@@ -85,12 +91,12 @@ class SenderFI:
             return tuple(int(v) for v in fr[idx[self.rng.choice(len(idx), p=pr)]])
         return tuple(int(v) for v in fr[idx[int(np.argmin(w[idx]))]])
 
-    def stepup_disclosure(self, x, fr, policy: Node) -> tuple:
+    def stepup_disclosure(self, x, fr, policy: Node, gate=None) -> tuple:
         """Negotiation-aware partial disclosure when Phi(x) = 0: for each frontier branch u disclose
         min(u, x) and keep the branch whose residual step-up deficit is smallest (ties: lower
         disclosure cost). Without this the receiver's MAN plans from an empty claim set and
         rejects payments that one step-up would resolve."""
-        if self.actions is None:
+        if self.actions is None or (gate is not None and not gate()):
             return tuple([0] * self.schema.n)
         best, bkey, seen = tuple([0] * self.schema.n), None, set()
         for u in fr:
@@ -110,8 +116,20 @@ class SenderFI:
         sen = normalize(evidence, pid, now, self.profile, self.schema)
         x = sen.profile
         fr, w, ph = self.cache.get(policy)
-        chosen = self.select(x, fr, w)
-        sat = chosen is not None
+        gate = None
+        if self.governor is not None:
+            epoch = evidence_epoch(evidence)
+            t0 = time.perf_counter()
+            chosen, info = self.governor.select(pid, p.payer_ref, p.receiver_fi, policy, x, epoch, now)
+            info["governor_ms"] = (time.perf_counter() - t0) * 1e3
+            self.last_info = info
+            sat = info["event"] != "unsat"
+            if info["event"] == "ledger_refused":
+                chosen = tuple([0] * self.schema.n)  # forced failure: nothing the ledger cannot answer
+            gate = lambda: self.governor.allow_probe(p.payer_ref, p.receiver_fi, policy, epoch)  # noqa: E731
+        else:
+            chosen = self.select(x, fr, w)
+            sat = chosen is not None
         if self.mode == "ALL":
             chosen = x
         elif self.mode == "FIXED":
@@ -120,7 +138,7 @@ class SenderFI:
             if not sat:
                 chosen = None
         if chosen is None:
-            chosen = self.stepup_disclosure(x, fr, policy)
+            chosen = self.stepup_disclosure(x, fr, policy, gate)
         claims = self.schema.profile_claims(chosen)
         receipt = None
         if self.log is not None:

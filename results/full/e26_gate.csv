@@ -1,0 +1,2 @@
+gate,mean_reduction_rba_empirical_2.35pct,fkg_failing_pairs,fkg_failing_pair_names,passed,passed_by,consequence
+2 (after E26),0.0347168,6,device_continuity~account_age; device_continuity~auth_freshness; device_continuity~network_continuity; account_age~auth_freshness; account_age~network_continuity; auth_freshness~network_continuity,True, FKG fails,report the real-prior frontier as the finding; drop the 'improves' wording

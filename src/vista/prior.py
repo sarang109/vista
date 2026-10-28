@@ -56,7 +56,8 @@ class Prior:
         return pr
 
     @classmethod
-    def random_ising(cls, dims, rng, kind: str = "ferro", strength: float = 2.0):
+    def random_ising(cls, dims, rng, kind: str = "ferro", strength: float = 2.0, field_sd: float = 0.7):
+        """field_sd sets how skewed the single-attribute marginals are (larger = more skewed)."""
         n = len(dims)
         J = np.zeros((n, n))
         for i in range(n):
@@ -68,7 +69,7 @@ class Prior:
                     J[i, j] = -mag
                 elif kind == "mixed":
                     J[i, j] = mag * rng.choice([-1, 1])
-        field = [rng.normal(0, 0.7, size=d) for d in dims]
+        field = [rng.normal(0, field_sd, size=d) for d in dims]
         return cls.ising(dims, J, field)
 
     # -- queries

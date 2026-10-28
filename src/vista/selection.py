@@ -179,6 +179,34 @@ class SelectionSpace:
                 "L_min": self.L_min, "PoD": 0.0, "mutual_info_given_accept": 0.0, "eps_sel": 0.0,
                 "worst_adv": 0.0, "exp_cost": float(self.w.sum()), "n_views": 1}
 
+    # ------------------------------------------------------------------ signature space (pcgs.py)
+    def signature_space(self, target_mask: np.ndarray | None = None):
+        """Aggregate states by signature A(x) (Lemma 2). Targets carried along for Bayes attackers:
+        'branch' = the globally cheapest branch is unavailable (the attack used in metrics())."""
+        from .pcgs import SignatureSpace
+        targets = {"branch": (~self.avail[:, int(np.argmin(self.w))]).astype(float)}
+        if target_mask is not None:
+            targets["target"] = np.asarray(target_mask, dtype=float)
+        return SignatureSpace.from_states(self.avail, np.where(self.accept, self.prior.p, 0.0), self.w, targets)
+
+    def expand(self, ss, Q: np.ndarray) -> np.ndarray:
+        """State-level kernel K[x, v] = Q[A(x), v] for a signature-level kernel table."""
+        K = np.zeros(self.avail.shape)
+        rows = np.flatnonzero(self.accept & (self.prior.p > 0))
+        codes = self.avail[rows].astype(np.int64) @ (1 << np.arange(self.avail.shape[1], dtype=np.int64))
+        order = np.argsort(ss.codes)
+        K[rows] = Q[order[np.searchsorted(ss.codes[order], codes)]]
+        return K
+
+    def kernel_pcgs(self, overhead: float) -> np.ndarray:
+        """Prior-corrected Gibbs selection: minimum-Lambda kernel within (1 + overhead) x the DET cost."""
+        ss = self.signature_space()
+        return self.expand(ss, ss.compile(overhead).Q)
+
+    def zero_leakage_feasible(self) -> bool:
+        """Theorem 1: some branch-revealing kernel has Lambda = 0 iff the exact-cover system is feasible."""
+        return self.signature_space().zero_leakage_system()["feasible"]
+
     def a_max(self) -> int:
         return int(self.avail.sum(1).max())
 

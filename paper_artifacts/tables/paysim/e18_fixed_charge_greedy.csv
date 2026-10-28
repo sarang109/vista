@@ -1,5 +1,5 @@
 kind,F_bytes,m_bytes,F_over_m_bytes,F_ms,m_ms,k,myopic_ratio,density_ratio,groups,F_over_m,density_mean_ratio,density_max_ratio,myopic_mean_ratio,myopic_max_ratio,density_optimal_rate,myopic_optimal_rate
-measured_backend,339,85,3.98824,0.0831051,0.00358365,,,,,,,,,,,
+measured_backend,339,85,3.98824,0.0831115,0.00363318,,,,,,,,,,,
 adversarial_family,,,,,,4,2,1,,,,,,,,
 adversarial_family,,,,,,8,4,1,,,,,,,,
 adversarial_family,,,,,,16,8,1,,,,,,,,

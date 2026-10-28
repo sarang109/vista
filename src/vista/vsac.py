@@ -107,6 +107,7 @@ class VerifyConfig:
     require_commitment: bool = False
     clock_skew_s: int = 5
     max_lifetime_s: int = 900
+    status_grace: object = None  # optional payment -> allowed status staleness (s), e.g. by amount tier
 
 
 @dataclass
@@ -170,7 +171,8 @@ class Verifier:
             return self._fail("unknown_schema")
         # issuer authentication and status
         try:
-            rec = self.trust.resolve(h["kid"], now, role="issuer", check_status=c.check_status)
+            grace = c.status_grace(p) if c.status_grace is not None else None
+            rec = self.trust.resolve(h["kid"], now, role="issuer", check_status=c.check_status, max_staleness=grace)
         except TrustError as e:
             return self._fail(e.reason)
         if rec.institution != h["sender"]:
@@ -224,7 +226,8 @@ class Verifier:
         if c.check_proofs:
             try:
                 if backend in ("sd", "hashchain", "bop"):
-                    att = self.trust.resolve(h["attestor_kid"], now, role="attestor", check_status=c.check_status)
+                    att = self.trust.resolve(h["attestor_kid"], now, role="attestor", check_status=c.check_status,
+                                             max_staleness=grace)
                     if att.institution != h["sender"]:
                         return self._fail("attestor_mismatch")
                 if backend == "sd":

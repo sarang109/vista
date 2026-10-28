@@ -321,8 +321,158 @@ def run(cfg: dict, out: str) -> list[str]:
     _row(rows, 24, "Deterrence law q* = g/(delta(g+F)) matches best response", "Proposition 8.1", n24, n24 - mism,
          f"{mism} mismatches; toy q*(20,400,0.9) = {100 * audit.q_star(20, 400, .9):.1f}%", "[P]")
 
+    selection_theory_checks(rows, rng, N)
     path = write_csv(os.path.join(out, "verification_appendix.csv"), rows)
     return [path]
+
+
+def _random_space(rng, sch, kind="mixed", sparse=0.0, m_range=(2, 6)):
+    while True:
+        node = pol.random_dnf(sch, int(rng.integers(*m_range)), int(rng.integers(1, 3)), rng)
+        fr = pol.frontier(node, sch.n)
+        if len(fr) < 2:
+            continue
+        pr = Prior.random_ising(sch.dims, rng, kind)
+        if sparse > 0:
+            p = np.where(rng.random(len(pr.p)) < sparse, 0.0, pr.p)
+            if p.sum() <= 0:
+                continue
+            pr.p = p / p.sum()
+        w = fr.sum(1).astype(float) + rng.normal(0, 1.0, len(fr))
+        sp = SelectionSpace(pr, fr, w - w.min() + 1.0)
+        if sp.pA > 0:
+            return sp
+
+
+def selection_theory_checks(rows, rng, N):
+    """Checks 26-35: Lemma 1, Theorems 1-3, Lemma 2 and the stale-status grace bound."""
+    from ..repeated import StickyStore, coverage_payments, prob_all_seen, q_min, repeated_metrics
+    from ..trust import grace_window, unsafe_probability
+    sch = synthetic_schema(3, 4)
+
+    n = N(120)
+    gaps = []
+    for _ in range(n):
+        sp = _random_space(rng, sch)
+        ss = sp.signature_space()
+        for Q in (ss.kernel_det(), ss.kernel_exp(float(rng.uniform(0, 3)))):
+            m_sig, m_st = ss.metrics(Q), sp.metrics(sp.expand(ss, Q))
+            gaps.append(abs(m_sig["Lambda"] - m_st["Lambda"]))
+            gaps.append(abs(m_sig["I_bits"] - m_sig["E_L_bits"] - m_st["Lambda"]))
+    _row(rows, 26, "Lemma 1: Lambda = I(X;V) - E[L_S(V)] (signature space vs state-level metrics)", "Lemma 1",
+         len(gaps), sum(g < 1e-9 for g in gaps), f"max |gap| = {max(gaps):.1e} bits", "[P]")
+
+    n = N(300)
+    ok = obst = 0
+    for _ in range(n):
+        ss = _random_space(rng, sch).signature_space()
+        ok += not ss.zero_leakage_system()["feasible"]
+        obst += ss.two_branch_obstruction() is not None
+    _row(rows, 27, "Theorem 1: full-support priors, m >= 2: exact-cover system infeasible (every kernel leaks)",
+         "Theorem 1", n, ok, f"infeasible {ok}/{n}; two-branch obstruction found {obst}/{n}", "[P]")
+
+    n = N(103)
+    agree = feas = zero_ok = 0
+    for _ in range(n):
+        ss = _random_space(rng, sch, sparse=float(rng.choice([0.5, 0.8, 0.95]))).signature_space()
+        sysr = ss.zero_leakage_system()
+        fl = ss.lambda_floor()
+        if sysr["feasible"]:
+            feas += 1
+            agree += fl["Lambda"] < 1e-6
+            zero_ok += abs(ss.lam(ss.zero_leakage_kernel(sysr["w"]))) < 1e-12
+        else:
+            agree += fl["lower_bound"] > 1e-9
+    _row(rows, 28, "Theorem 1 (iff): sparse-support priors, system feasibility vs convex solver's Lambda* = 0",
+         "Theorem 1", n, agree, f"agree {agree}/{n} ({feas} feasible); w-kernel has Lambda = 0 in {zero_ok}/{feas}", "[P]")
+
+    n = N(60)
+    ok = 0
+    worst_gap = 0.0
+    for _ in range(n):
+        ss = _random_space(rng, sch, kind="ferro").signature_space()
+        c = ss.compile(float(rng.choice([0.01, 0.05, 0.1])))
+        Qe, _ = ss.exp_at_budget(c.budget)
+        best = math.inf
+        for _ in range(300):
+            Q = ss._normalise(np.log(rng.dirichlet(np.ones(ss.m), size=ss.n_signatures)))
+            if ss.cost(Q) <= c.budget:
+                best = min(best, ss.lam(Q))
+        worst_gap = max(worst_gap, c.gap_bits)
+        ok += (c.lam_bits <= ss.lam(Qe) + c.gap_bits + 1e-9) and (c.lam_bits <= best + 1e-9) and c.cost <= c.budget + 1e-9
+    _row(rows, 29, "Theorem 2: PCGS within budget and <= exponential mechanism and random kernels at equal cost",
+         "Theorem 2", n, ok, f"{ok}/{n}; max certified gap {worst_gap:.1e} bits", "[P]")
+
+    n = N(60)
+    ok = 0
+    for _ in range(n):
+        ss = _random_space(rng, sch).signature_space()
+        # mu is scaled to the smallest within-signature cost gap so that mu * gap >= 50 (near-ties need larger mu)
+        Cs = np.sort(np.where(ss.sig, ss.C[None, :], np.inf), axis=1)
+        gap = np.min(np.where(np.isfinite(Cs[:, 1]), Cs[:, 1] - Cs[:, 0], np.inf))
+        Q, _, _, _ = ss.blahut_arimoto(max(200.0, 50.0 / gap) if np.isfinite(gap) and gap > 0 else 200.0)
+        ok += abs(ss.cost(Q) - ss.cost(ss.kernel_det())) < 1e-6
+    _row(rows, 30, "Theorem 2: DET is the mu -> infinity limit of the Gibbs kernel (cost equal at mu * min gap >= 50)",
+         "Theorem 2", n, ok, f"{ok}/{n}")
+
+    n = N(60)
+    ok = 0
+    for _ in range(n):
+        sp = _random_space(rng, sch)
+        ss = sp.signature_space()
+        K = rng.dirichlet(np.ones(len(sp.front)), size=len(sp.prior.p)) * sp.avail
+        K = np.where(sp.accept[:, None], K / np.maximum(K.sum(1, keepdims=True), 1e-300), 0.0)
+        codes = sp.avail.astype(np.int64) @ (1 << np.arange(ss.m))
+        Qb = np.array([(sp.prior.p[(codes == c) & sp.accept][:, None] * K[(codes == c) & sp.accept]).sum(0) /
+                       sp.prior.p[(codes == c) & sp.accept].sum() for c in ss.codes])
+        a, b = sp.metrics(K), ss.metrics(Qb)
+        ok += b["Lambda"] <= a["Lambda"] + 1e-9 and abs(b["cost"] - a["exp_cost"]) < 1e-9
+    _row(rows, 31, "Lemma 2: averaging a kernel over each signature keeps cost and never raises Lambda", "Lemma 2",
+         n, ok, f"{ok}/{n}", "[P]")
+
+    n = N(40)
+    ok = 0
+    for _ in range(n):
+        ss = _random_space(rng, sch, kind="ferro", m_range=(3, 6)).signature_space()
+        Q = ss.kernel_exp(float(rng.uniform(0.2, 2)))
+        nb = coverage_payments(q_min(ss, Q), ss.m, 0.05)
+        ok += min(prob_all_seen(Q[a], nb) for a in range(ss.n_signatures)) >= 0.95
+    _row(rows, 32, "Theorem 3(1): after ln(m/delta)/q_min fresh payments all supported branches seen w.p. >= 1-delta",
+         "Theorem 3", n, ok, f"{ok}/{n} (delta = 0.05, exact inclusion-exclusion)", "[P]")
+
+    n = N(40)
+    ok = 0
+    for _ in range(n):
+        ss = _random_space(rng, sch, kind="ferro", m_range=(3, 6)).signature_space()
+        Q = ss.kernel_exp(1.0)
+        I = [repeated_metrics(ss, Q, k)["I_bits"] for k in (1, 2, 3, 5, 8)]
+        IA = float(-(ss.mass * np.log2(ss.mass)).sum())
+        ok += all(I[i] <= k * I[0] + 1e-9 for i, k in enumerate((1, 2, 3, 5, 8))) and \
+            all(a <= b + 1e-9 for a, b in zip(I, I[1:])) and I[-1] <= IA + 1e-9
+    _row(rows, 33, "Theorem 3(2): I(X;V^n) <= n I(X;V), nondecreasing in n, bounded by I(X;A(X))", "Theorem 3", n,
+         ok, f"{ok}/{n}", "[P]")
+
+    n = N(200)
+    ok = 0
+    st = StickyStore(b"verification")
+    for k in range(n):
+        sup = rng.random(4) < 0.7
+        sup[int(rng.integers(4))] = True
+        probs = rng.dirichlet(np.ones(4))
+        first = st.choose(("acct", k, "epoch"), sup, probs)[0]
+        ok += all(st.choose(("acct", k, "epoch"), sup, probs)[0] == first for _ in range(10))
+    _row(rows, 34, "Theorem 3(3): sticky selection repeats the branch while evidence is unchanged", "Theorem 3", n, ok,
+         f"{ok}/{n} sequences constant over 11 payments", "[P]")
+
+    n = N(2000)
+    lam = 1 / 3600.0
+    tau = grace_window(0.05, lam)
+    s = rng.uniform(0, tau, n)
+    rev = rng.exponential(1 / lam, n)
+    frac = float((rev <= s).mean())
+    ok = int(all(unsafe_probability(x, lam) <= 0.05 + 1e-12 for x in s) and frac <= 0.05 + 3 * math.sqrt(0.05 / n))
+    _row(rows, 35, "Stale-status grace: P(revoked within staleness <= tau) <= eps (eps = 0.05)", "Proposition C6", 1,
+         ok, f"tau = {tau:.0f}s; Monte Carlo unsafe share {frac:.4f} vs eps 0.05", "[P]")
 
 
 def _series_cost(acts, perm, kind):

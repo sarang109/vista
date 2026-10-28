@@ -118,3 +118,33 @@ def random_kdnf(rng, n, k, m):
     # keep an antichain (drop terms containing another term)
     terms = [t for t in terms if not any(o < t for o in terms)]
     return terms
+
+
+class QueryBudget:
+    """Policy-extraction budget enforced by the disclosure governor. Every capsule that does not satisfy the
+    receiver policy (a step-up partial disclosure) answers a membership query about that policy; the governor
+    allows at most `limit` such probes per key (sender account, receiver, policy, evidence epoch) and counts
+    every disclosure for reporting. limit=None counts without enforcing."""
+
+    def __init__(self, limit: int | None):
+        self.limit = limit
+        self.probes: dict = {}
+        self.payments = 0
+        self.suppressed = 0
+
+    def count(self):
+        self.payments += 1
+
+    def allow_probe(self, key) -> bool:
+        used = self.probes.get(key, 0)
+        if self.limit is not None and used >= self.limit:
+            self.suppressed += 1
+            return False
+        self.probes[key] = used + 1
+        return True
+
+
+def extraction_budget(n: int, k: int, m: int, fraction: float = 0.5) -> int:
+    """A budget at `fraction` of the counting lower bound on binary membership queries needed to identify
+    an m-term k-uniform monotone DNF over n atoms (Prop 7.1)."""
+    return max(1, int(fraction * min_queries(counting_bound_exact(n, k, m), 2)))

@@ -73,10 +73,14 @@ def evidence_leaves(evidence_items: list[dict], salt: bytes) -> list[bytes]:
 
 # ---------------------------------------------------------------------------- transparency log
 class TransparencyLog:
-    """Append-only hash chain. Optional JSONL persistence. Thread-safe."""
+    """Append-only hash chain. Optional JSONL persistence. Thread-safe.
+    retain=False keeps only the chain head, entry count and byte count (constant memory for long streams)."""
 
-    def __init__(self, path: str | None = None):
+    def __init__(self, path: str | None = None, retain: bool = True):
         self.entries: list[dict] = []
+        self.retain = retain
+        self.count = 0
+        self.bytes = 0
         self.head = b"\x00" * 32
         self.path = path
         self._lock = threading.Lock()
@@ -85,12 +89,15 @@ class TransparencyLog:
 
     def append(self, pid: str, sender: str, root: bytes, claim_ids: list[str], ts: int) -> dict:
         with self._lock:
-            body = {"idx": len(self.entries), "pid": pid, "sender": sender, "root": root.hex(),
+            body = {"idx": self.count, "pid": pid, "sender": sender, "root": root.hex(),
                     "claims": sorted(claim_ids), "ts": ts, "prev": self.head.hex()}
             h = sha256(canonical_json(body))
             self.head = h
             entry = dict(body, entry_hash=h.hex())
-            self.entries.append(entry)
+            self.count += 1
+            self.bytes += len(canonical_json(entry))
+            if self.retain:
+                self.entries.append(entry)
             if self.path:
                 with open(self.path, "a") as f:
                     f.write(json.dumps(entry) + "\n")
